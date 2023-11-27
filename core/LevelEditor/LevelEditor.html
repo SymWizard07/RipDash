@@ -2,334 +2,403 @@
 <html>
 
 <head>
-  <style>
-    canvas {
-      border: 1px solid black;
-      cursor: crosshair;
-    }
+    <style>
+        canvas {
+            border: 1px solid black;
+            cursor: crosshair;
+        }
 
-    .color-palette {
-      display: flex;
-      margin-top: 10px;
-    }
+        .color-palette {
+            display: flex;
+            margin-top: 10px;
+        }
 
-    .color-palette button {
-      width: 30px;
-      height: 30px;
-      margin-right: 5px;
-      border: none;
-      cursor: pointer;
-    }
+        .color-palette button {
+            width: 30px;
+            height: 30px;
+            margin-right: 5px;
+            border: none;
+            cursor: pointer;
+        }
 
-    .eraser-button {
-      margin-left: 10px;
-      background-color: #f8f8f8;
-      color: #888888;
-    }
+        .eraser-button {
+            margin-left: 10px;
+            background-color: #f8f8f8;
+            color: #888888;
+        }
 
-    .eraser-button.active {
-      background-color: #888888;
-      color: #f8f8f8;
-    }
+        .eraser-button.active {
+            background-color: #888888;
+            color: #f8f8f8;
+        }
 
-    .move-button {
-      margin-left: 10px;
-    }
-  </style>
+        .move-button {
+            margin-left: 10px;
+        }
+    </style>
 </head>
 
 <body>
-  <canvas id="levelEditorCanvas" width="800" height="600"></canvas>
-  <button id="exportButton">Export Level</button>
-  <input type="file" id="importInput" accept=".txt" style="display: none;">
-  <button id="importButton">Import Level</button>
-  <input type="color" id="colorPicker">
-  <button id="clearButton">Clear</button>
-  <div class="color-palette"></div>
-  <button id="eraserButton" class="eraser-button">Eraser</button>
-  <button id="moveLeftButton" class="move-button">Move Left</button>
-  <button id="moveRightButton" class="move-button">Move Right</button>
-  <button id="moveUpButton" class="up-button">Move Up</button>
-  <button id="moveDownButton" class="down-button">Move Down</button>
-  <script>
-    window.addEventListener("DOMContentLoaded", () => {
-      const canvas = document.getElementById("levelEditorCanvas");
-      const ctx = canvas.getContext("2d");
+    <canvas id="levelEditorCanvas" width="800" height="600"></canvas>
+    <button id="exportButton">Export Level</button>
+    <input type="file" id="importInput" accept=".txt" style="display: none;">
+    <button id="importButton">Import Level</button>
+    <input type="color" id="colorPicker">
+    <button id="clearButton">Clear</button>
+    <div class="color-palette"></div>
+    <button id="eraserButton" class="eraser-button">Eraser</button>
+    <button id="moveLeftButton" class="move-button">Move Left</button>
+    <button id="moveRightButton" class="move-button">Move Right</button>
+    <button id="moveUpButton" class="up-button">Move Up</button>
+    <button id="moveDownButton" class="down-button">Move Down</button>
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+            const canvas = document.getElementById("levelEditorCanvas");
+            const ctx = canvas.getContext("2d");
 
-      const gridSize = 32; // Size of each grid cell
-      const levelObjects = [];
-      const colorPalette = new Set(); // Set to store unique colors
+            const gridSize = 32; // Size of each grid cell
+            const levelObjects = [];
+            const colorPalette = new Set(); // Set to store unique colors
 
-      let isDrawing = false;
-      let startX, startY;
-      let currentX, currentY;
-      let currentColor = "#000000";
-      let isEraserActive = false;
-      let gridOffsetX = 0;
-      let gridOffsetY = 0;
+            let isDrawing = false;
+            let startX, startY;
+            let currentX, currentY;
+            let currentColor = "#000000";
+            let isEraserActive = false;
+            let gridOffsetX = 0;
+            let gridOffsetY = 0;
 
-      function snapToGrid(value) {
-        return Math.floor(value / gridSize) * gridSize;
-      }
+            function snapToGrid(value) {
+                return Math.floor(value / gridSize) * gridSize;
+            }
 
-      function drawObjects() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+            function drawObjects() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw grid lines
-        ctx.strokeStyle = "#CCCCCC";
-        for (let x = -gridOffsetX % gridSize; x < canvas.width; x += gridSize) {
-          ctx.beginPath();
-          ctx.moveTo(x, 0);
-          ctx.lineTo(x, canvas.height);
-          ctx.stroke();
-        }
-        for (let y = 0; y < canvas.height; y += gridSize) {
-          ctx.beginPath();
-          ctx.moveTo(0, y);
-          ctx.lineTo(canvas.width, y);
-          ctx.stroke();
-        }
+                // Draw grid lines
+                ctx.strokeStyle = "#CCCCCC";
+                for (let x = -gridOffsetX % gridSize; x < canvas.width; x += gridSize) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, canvas.height);
+                    ctx.stroke();
+                }
+                for (let y = 0; y < canvas.height; y += gridSize) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(canvas.width, y);
+                    ctx.stroke();
+                }
 
-        // Draw level objects
-        for (const obj of levelObjects) {
-          ctx.fillStyle = obj.color;
-          ctx.fillRect(obj.x - gridOffsetX, obj.y + gridOffsetY, obj.width, obj.height);
+                // Draw level objects
+                for (const obj of levelObjects) {
+                    ctx.fillStyle = obj.color;
+                    ctx.fillRect(obj.x - gridOffsetX, obj.y + gridOffsetY, obj.width, obj.height);
 
-          ctx.strokeStyle = "#000000";
-          ctx.lineWidth = 1;
-          ctx.strokeRect(obj.x - gridOffsetX, obj.y + gridOffsetY, obj.width, obj.height);
-        }
-      }
+                    ctx.strokeStyle = "#000000";
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(obj.x - gridOffsetX, obj.y + gridOffsetY, obj.width, obj.height);
+                }
+            }
 
-      function startDrawing(event) {
-        isDrawing = true;
-        startX = snapToGrid(event.clientX - canvas.offsetLeft) + gridOffsetX;
-        startY = snapToGrid(event.clientY - canvas.offsetTop);
-        currentX = startX;
-        currentY = startY;
-      }
+            function startDrawing(event) {
+                isDrawing = true;
+                startX = snapToGrid(event.clientX - canvas.offsetLeft) + gridOffsetX;
+                startY = snapToGrid(event.clientY - canvas.offsetTop);
+                currentX = startX;
+                currentY = startY;
+            }
 
-      function stopDrawing() {
-        if (isDrawing) {
-          isDrawing = false;
+            //   function stopDrawing() {
+            //     if (isDrawing) {
+            //       isDrawing = false;
 
-          const width = Math.abs(currentX - startX) + gridSize;
-          const height = Math.abs(currentY - startY) + gridSize;
-          const x = Math.min(startX, currentX);
-          const y = Math.min(startY, currentY);
+            //       const width = Math.abs(currentX - startX) + gridSize;
+            //       const height = Math.abs(currentY - startY) + gridSize;
+            //       const x = Math.min(startX, currentX);
+            //       const y = Math.min(startY, currentY);
 
-          if (isEraserActive) {
-            // Remove objects intersecting with the eraser rectangle
-            levelObjects.forEach((obj, index) => {
-              if (
-                obj.x < x + width &&
-                obj.x + obj.width > x &&
-                obj.y < y + height &&
-                obj.y + obj.height > y
-              ) {
-                levelObjects.splice(index, 1);
-                colorPalette.delete(obj.color);
-              }
+            //       if (isEraserActive) {
+            //         // Remove objects intersecting with the eraser rectangle
+            //         levelObjects.forEach((obj, index) => {
+            //           if (
+            //             obj.x < x + width &&
+            //             obj.x + obj.width > x &&
+            //             obj.y < y + height &&
+            //             obj.y + obj.height > y
+            //           ) {
+            //             levelObjects.splice(index, 1);
+            //             colorPalette.delete(obj.color);
+            //           }
+            //         });
+            //       } else {
+            //         const newObj = {
+            //           x: x,
+            //           y: y,
+            //           width: width,
+            //           height: height,
+            //           color: currentColor
+            //         };
+
+            //         levelObjects.push(newObj);
+            //         colorPalette.add(currentColor);
+            //       }
+
+            //       drawObjects();
+            //       updateColorPalette();
+            //     }
+            //   }
+            function stopDrawing() {
+                if (isDrawing) {
+                    isDrawing = false;
+
+                    const width = Math.abs(currentX - startX) + gridSize;
+                    const height = Math.abs(currentY - startY) + gridSize;
+                    const x = Math.min(startX, currentX);
+                    const y = Math.min(startY, currentY);
+
+                    let merged = false;
+
+                    if (isEraserActive) {
+                        // Remove objects intersecting with the eraser rectangle
+                        levelObjects.forEach((obj, index) => {
+                            if (
+                                obj.x < x + width &&
+                                obj.x + obj.width > x &&
+                                obj.y < y + height &&
+                                obj.y + obj.height > y
+                            ) {
+                                levelObjects.splice(index, 1);
+                                colorPalette.delete(obj.color);
+                            }
+                        });
+                    } else {
+                        const newObj = {
+                            x: x,
+                            y: y,
+                            width: width,
+                            height: height,
+                            color: currentColor
+                        };
+
+                        // Check for adjacent blocks of the same color and merge them
+                        for (let i = 0; i < levelObjects.length; i++) {
+                            const obj = levelObjects[i];
+                            if (
+                                obj.color === currentColor &&
+                                obj.x + obj.width === newObj.x &&
+                                obj.y === newObj.y &&
+                                obj.height === newObj.height
+                            ) {
+                                // Merge with the adjacent block
+                                obj.width += newObj.width;
+                                merged = true;
+                                break;
+                            } else if (
+                                obj.color === currentColor &&
+                                obj.x === newObj.x &&
+                                obj.y + obj.height === newObj.y &&
+                                obj.width === newObj.width
+                            ) {
+                                // Merge with the adjacent block
+                                obj.height += newObj.height;
+                                merged = true;
+                                break;
+                            }
+                        }
+
+                        if (!merged) {
+                            levelObjects.push(newObj);
+                            colorPalette.add(currentColor);
+                        }
+                    }
+
+                    drawObjects();
+                    updateColorPalette();
+                }
+            }
+
+            function updateColor(event) {
+                currentColor = event.target.value;
+            }
+
+            function clearLevel() {
+                levelObjects.length = 0;
+                colorPalette.clear();
+                drawObjects();
+                updateColorPalette();
+            }
+
+            function exportLevel() {
+                const namedObjects = levelObjects.map(obj => {
+                    let objectName = "default"; // Default object name
+                    switch (obj.color) {
+                        case "#000000":
+                            objectName = "block";
+                            break;
+                        case "#ff0000":
+                            objectName = "red_block";
+                            break;
+                        // Add more cases for different colors and names here
+                        // ...
+
+                    }
+                    return {
+                        name: objectName,
+                        x: obj.x,
+                        y: obj.y,
+                        width: obj.width,
+                        height: obj.height,
+                        color: obj.color
+                    };
+                });
+
+                const levelData = JSON.stringify(namedObjects);
+                const blob = new Blob([levelData], { type: "text/plain" });
+                const url = URL.createObjectURL(blob);
+
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = "level.txt";
+                link.click();
+
+                URL.revokeObjectURL(url);
+            }
+
+            // function exportLevel() {
+            //   const levelData = JSON.stringify(levelObjects);
+            //   const blob = new Blob([levelData], { type: "text/plain" });
+            //   const url = URL.createObjectURL(blob);
+
+            //   const link = document.createElement("a");
+            //   link.href = url;
+            //   link.download = "level.txt";
+            //   link.click();
+
+            //   URL.revokeObjectURL(url);
+            // }
+
+            function importLevel() {
+                const importInput = document.getElementById("importInput");
+                importInput.click();
+            }
+
+            function handleImport(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const importedData = JSON.parse(e.target.result);
+                        levelObjects.length = 0;
+                        colorPalette.clear();
+
+                        importedData.forEach(obj => {
+                            levelObjects.push(obj);
+                            colorPalette.add(obj.color);
+                        });
+
+                        drawObjects();
+                        updateColorPalette();
+                    };
+                    reader.readAsText(file);
+                }
+            }
+
+            function toggleEraser() {
+                isEraserActive = !isEraserActive;
+                eraserButton.classList.toggle("active");
+            }
+
+            function updateColorPalette() {
+                const colorPaletteContainer = document.querySelector(".color-palette");
+                colorPaletteContainer.innerHTML = "";
+
+                colorPalette.forEach(color => {
+                    const colorButton = document.createElement("button");
+                    colorButton.style.backgroundColor = color;
+                    colorButton.addEventListener("click", () => {
+                        currentColor = color;
+                    });
+                    colorPaletteContainer.appendChild(colorButton);
+                });
+            }
+
+            function moveLeft() {
+                gridOffsetX -= gridSize;
+                drawObjects();
+            }
+
+            function moveRight() {
+                gridOffsetX += gridSize;
+                drawObjects();
+            }
+
+            function moveUp() {
+                gridOffsetY -= gridSize;
+                drawObjects();
+            }
+
+            function moveDown() {
+                gridOffsetY += gridSize;
+                drawObjects();
+            }
+
+            canvas.addEventListener("mousedown", startDrawing);
+            canvas.addEventListener("mouseup", stopDrawing);
+            canvas.addEventListener("mousemove", event => {
+                if (isDrawing) {
+                    currentX = snapToGrid(event.clientX - canvas.offsetLeft) + gridOffsetX;
+                    currentY = snapToGrid(event.clientY - canvas.offsetTop) + gridOffsetY;
+                    drawObjects();
+
+                    const width = Math.abs(currentX - startX) + gridSize;
+                    const height = Math.abs(currentY - startY) + gridSize;
+                    const x = Math.min(startX, currentX);
+                    const y = Math.min(startY, currentY);
+
+                    ctx.fillStyle = isEraserActive ? "#FFFFFF" : currentColor;
+                    ctx.fillRect(x - gridOffsetX, y, width, height);
+
+                    ctx.strokeStyle = "#000000";
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(x - gridOffsetX, y, width, height);
+                }
             });
-          } else {
-            const newObj = {
-              x: x,
-              y: y,
-              width: width,
-              height: height,
-              color: currentColor
-            };
 
-            levelObjects.push(newObj);
-            colorPalette.add(currentColor);
-          }
+            const colorPicker = document.getElementById("colorPicker");
+            colorPicker.addEventListener("change", updateColor);
 
-          drawObjects();
-          updateColorPalette();
-        }
-      }
+            const clearButton = document.getElementById("clearButton");
+            clearButton.addEventListener("click", clearLevel);
 
-      function updateColor(event) {
-        currentColor = event.target.value;
-      }
+            const exportButton = document.getElementById("exportButton");
+            exportButton.addEventListener("click", exportLevel);
 
-      function clearLevel() {
-        levelObjects.length = 0;
-        colorPalette.clear();
-        drawObjects();
-        updateColorPalette();
-      }
+            const importButton = document.getElementById("importButton");
+            importButton.addEventListener("click", importLevel);
 
-      function exportLevel() {
-        const namedObjects = levelObjects.map(obj => {
-          let objectName = "default"; // Default object name
-          switch (obj.color) {
-            case "#000000":
-              objectName = "block";
-              break;
-            case "#ff0000":
-              objectName = "red_block";
-              break;
-            // Add more cases for different colors and names here
-            // ...
+            const importInput = document.getElementById("importInput");
+            importInput.addEventListener("change", handleImport);
 
-          }
-          return {
-            name: objectName,
-            x: obj.x,
-            y: obj.y,
-            width: obj.width,
-            height: obj.height,
-            color: obj.color
-          };
-        });
 
-        const levelData = JSON.stringify(namedObjects);
-        const blob = new Blob([levelData], { type: "text/plain" });
-        const url = URL.createObjectURL(blob);
+            const eraserButton = document.getElementById("eraserButton");
+            eraserButton.addEventListener("click", toggleEraser);
 
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "level.txt";
-        link.click();
+            const moveLeftButton = document.getElementById("moveLeftButton");
+            moveLeftButton.addEventListener("click", moveLeft);
 
-        URL.revokeObjectURL(url);
-      }
+            const moveRightButton = document.getElementById("moveRightButton");
+            moveRightButton.addEventListener("click", moveRight);
 
-      // function exportLevel() {
-      //   const levelData = JSON.stringify(levelObjects);
-      //   const blob = new Blob([levelData], { type: "text/plain" });
-      //   const url = URL.createObjectURL(blob);
+            const moveUpButton = document.getElementById("moveUpButton");
+            moveUpButton.addEventListener("click", moveUp);
 
-      //   const link = document.createElement("a");
-      //   link.href = url;
-      //   link.download = "level.txt";
-      //   link.click();
-
-      //   URL.revokeObjectURL(url);
-      // }
-
-      function importLevel() {
-        const importInput = document.getElementById("importInput");
-        importInput.click();
-      }
-
-      function handleImport(event) {
-        const file = event.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function (e) {
-            const importedData = JSON.parse(e.target.result);
-            levelObjects.length = 0;
-            colorPalette.clear();
-
-            importedData.forEach(obj => {
-              levelObjects.push(obj);
-              colorPalette.add(obj.color);
-            });
+            const moveDownButton = document.getElementById("moveDownButton");
+            moveDownButton.addEventListener("click", moveDown);
 
             drawObjects();
-            updateColorPalette();
-          };
-          reader.readAsText(file);
-        }
-      }
-
-      function toggleEraser() {
-        isEraserActive = !isEraserActive;
-        eraserButton.classList.toggle("active");
-      }
-
-      function updateColorPalette() {
-        const colorPaletteContainer = document.querySelector(".color-palette");
-        colorPaletteContainer.innerHTML = "";
-
-        colorPalette.forEach(color => {
-          const colorButton = document.createElement("button");
-          colorButton.style.backgroundColor = color;
-          colorButton.addEventListener("click", () => {
-            currentColor = color;
-          });
-          colorPaletteContainer.appendChild(colorButton);
         });
-      }
-
-      function moveLeft() {
-        gridOffsetX -= gridSize;
-        drawObjects();
-      }
-
-      function moveRight() {
-        gridOffsetX += gridSize;
-        drawObjects();
-      }
-
-      function moveUp() {
-        gridOffsetY -= gridSize;
-        drawObjects();
-      }
-
-      function moveDown() {
-        gridOffsetY += gridSize;
-        drawObjects();
-      }
-
-      canvas.addEventListener("mousedown", startDrawing);
-      canvas.addEventListener("mouseup", stopDrawing);
-      canvas.addEventListener("mousemove", event => {
-        if (isDrawing) {
-          currentX = snapToGrid(event.clientX - canvas.offsetLeft) + gridOffsetX;
-          currentY = snapToGrid(event.clientY - canvas.offsetTop) + gridOffsetY;
-          drawObjects();
-
-          const width = Math.abs(currentX - startX) + gridSize;
-          const height = Math.abs(currentY - startY) + gridSize;
-          const x = Math.min(startX, currentX);
-          const y = Math.min(startY, currentY);
-
-          ctx.fillStyle = isEraserActive ? "#FFFFFF" : currentColor;
-          ctx.fillRect(x - gridOffsetX, y, width, height);
-
-          ctx.strokeStyle = "#000000";
-          ctx.lineWidth = 1;
-          ctx.strokeRect(x - gridOffsetX, y, width, height);
-        }
-      });
-
-      const colorPicker = document.getElementById("colorPicker");
-      colorPicker.addEventListener("change", updateColor);
-
-      const clearButton = document.getElementById("clearButton");
-      clearButton.addEventListener("click", clearLevel);
-
-      const exportButton = document.getElementById("exportButton");
-      exportButton.addEventListener("click", exportLevel);
-
-      const importButton = document.getElementById("importButton");
-      importButton.addEventListener("click", importLevel);
-
-      const importInput = document.getElementById("importInput");
-      importInput.addEventListener("change", handleImport);
-
-
-      const eraserButton = document.getElementById("eraserButton");
-      eraserButton.addEventListener("click", toggleEraser);
-
-      const moveLeftButton = document.getElementById("moveLeftButton");
-      moveLeftButton.addEventListener("click", moveLeft);
-
-      const moveRightButton = document.getElementById("moveRightButton");
-      moveRightButton.addEventListener("click", moveRight);
-
-      const moveUpButton = document.getElementById("moveUpButton");
-      moveUpButton.addEventListener("click", moveUp);
-
-      const moveDownButton = document.getElementById("moveDownButton");
-      moveDownButton.addEventListener("click", moveDown);
-
-      drawObjects();
-    });
-  </script>
+    </script>
 </body>
 
 </html>
