@@ -1,5 +1,7 @@
 package edu.graffwhitley.ripdash;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -8,7 +10,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.math.MathUtils;
+
+import edu.graffwhitley.ripdash.tiles.GroundTile;
+import edu.graffwhitley.ripdash.tiles.StaticTile;
+import edu.graffwhitley.ripdash.tiles.spikes.SpikeTile;
+
 import com.badlogic.gdx.math.Vector2;
 
 import com.badlogic.gdx.physics.box2d.*;
@@ -23,6 +29,10 @@ public class RdGame extends ApplicationAdapter {
 
 	Body playerBody;
 	Body triBody;
+
+	GroundTile ground;
+
+	ArrayList<StaticTile> staticTiles = new ArrayList<>();
 
 	@Override
 	public void create() {
@@ -51,47 +61,15 @@ public class RdGame extends ApplicationAdapter {
 		playerBody.createFixture(fixtureDef);
 
 		// Ground
-		BodyDef groundBodyDef = new BodyDef();
-		groundBodyDef.position.set(new Vector2(0, -10)); // Set the position of the ground in the world
-		groundBodyDef.type = BodyDef.BodyType.StaticBody;
 
-		Body groundBody = world.createBody(groundBodyDef);
+		staticTiles.add(new GroundTile(GroundTile.BRICK, 2, 0));
+		staticTiles.add(new GroundTile(GroundTile.SQUARE, 0, 0));
+		staticTiles.add(new SpikeTile(SpikeTile.SPIKE, 2, 2));
 
-		PolygonShape groundBox = new PolygonShape();
-		groundBox.setAsBox(20 / 2, 1 / 2); // Set the size of the ground box
-
-		groundBody.createFixture(groundBox, 0.0f); // 0.0f is the density, which is irrelevant for static bodies
-
-		groundBox.dispose();
-
-		// Spike
-
-		PolygonShape triangleShape = new PolygonShape();
-		triangleShape.set(new Vector2[] { new Vector2(-1, -1), new Vector2(1, -1), new Vector2(0, 1) });
-
-		FixtureDef triDef = new FixtureDef();
-		triDef.shape = triangleShape;
-		triDef.density = 1.0f; // Adjust as needed
-		// triDef.friction = 0.5f; // Adjust as needed
-		// triDef.restitution = 0.3f; // Adjust as needed
-
-		BodyDef triBodyDef = new BodyDef();
-		triBodyDef.position.set(new Vector2(0, -2));
-		triBodyDef.type = BodyDef.BodyType.DynamicBody; // Or StaticBody/KinematicBody as needed
-
-		triBody = world.createBody(triBodyDef);
-		triBody.createFixture(triDef);
-
-		Texture triTexture = new Texture(Gdx.files.internal("./Triangle.png"));
-		Sprite triSprite = new Sprite(triTexture);
-
-		float pixelsPerMeter = 100; // Conversion factor from meters to pixels
-		float spriteWidth = 1 * pixelsPerMeter;
-		float spriteHeight = 1 * pixelsPerMeter;
-
-		triSprite.setSize(spriteWidth, spriteHeight);
-		triSprite.setOrigin(spriteWidth / 2, spriteHeight / 2); // Set origin to the center for rotation
-
+		for (StaticTile staticTile : staticTiles) {
+			staticTile.createTile(world);
+		}
+		
 		// Debug Cam
 		debugRenderer = new Box2DDebugRenderer();
 	}
@@ -103,10 +81,12 @@ public class RdGame extends ApplicationAdapter {
 		camera.update();
 		debugRenderer.render(world, camera.combined);
 
-		
-
 		batch.begin();
-		// batch.draw(img, 0, 0);
+		
+		for (StaticTile staticTile : staticTiles) {
+			staticTile.draw(batch);
+		}
+
 		batch.end();
 		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 			playerBody.setLinearVelocity(0, 40.0f);
