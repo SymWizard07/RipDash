@@ -41,7 +41,7 @@
 <body>
     <canvas id="levelEditorCanvas" width="800" height="600"></canvas>
     <button id="exportButton">Export Level</button>
-    <input type="file" id="importInput" accept=".txt" style="display: none;">
+    <input type="file" id="importInput" accept=".txt, .json" style="display: none;">
     <button id="importButton">Import Level</button>
     <input type="color" id="colorPicker">
     <button id="clearButton">Clear</button>
@@ -229,7 +229,7 @@
 
                 const link = document.createElement("a");
                 link.href = url;
-                link.download = "level.txt";
+                link.download = "level.json";
                 link.click();
 
                 URL.revokeObjectURL(url);
@@ -271,9 +271,12 @@
                         drawObjects();
                         updateColorPalette();
                     };
+
+                    // Read the file as text
                     reader.readAsText(file);
                 }
             }
+
 
 
             function toggleEraser() {
