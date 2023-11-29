@@ -83,7 +83,7 @@
                     ctx.lineTo(x, canvas.height);
                     ctx.stroke();
                 }
-                for (let y = 0; y < canvas.height; y += gridSize) {
+                for (let y = -gridOffsetY % gridSize; y < canvas.height; y += gridSize) {
                     ctx.beginPath();
                     ctx.moveTo(0, y);
                     ctx.lineTo(canvas.width, y);
@@ -93,11 +93,11 @@
                 // Draw level objects
                 for (const obj of levelObjects) {
                     ctx.fillStyle = obj.color;
-                    ctx.fillRect(obj.x - gridOffsetX, obj.y + gridOffsetY, obj.width, obj.height);
+                    ctx.fillRect(obj.x - gridOffsetX, obj.y - gridOffsetY, obj.width, obj.height);
 
                     ctx.strokeStyle = "#000000";
                     ctx.lineWidth = 1;
-                    ctx.strokeRect(obj.x - gridOffsetX, obj.y + gridOffsetY, obj.width, obj.height);
+                    ctx.strokeRect(obj.x - gridOffsetX, obj.y - gridOffsetY, obj.width, obj.height);
                 }
             }
 
@@ -117,8 +117,6 @@
                     const height = Math.abs(currentY - startY) + gridSize;
                     const x = Math.min(startX, currentX);
                     const y = Math.min(startY, currentY);
-
-                    let merged = false;
 
                     if (isEraserActive) {
                         // Remove objects intersecting with the eraser rectangle
@@ -142,42 +140,15 @@
                             color: currentColor
                         };
 
-                        // Check for adjacent blocks of the same color and merge them
-                        for (let i = 0; i < levelObjects.length; i++) {
-                            const obj = levelObjects[i];
-                            if (
-                                obj.color === currentColor &&
-                                obj.x + obj.width === newObj.x &&
-                                obj.y === newObj.y &&
-                                obj.height === newObj.height
-                            ) {
-                                // Merge with the adjacent block
-                                obj.width += newObj.width;
-                                merged = true;
-                                break;
-                            } else if (
-                                obj.color === currentColor &&
-                                obj.x === newObj.x &&
-                                obj.y + obj.height === newObj.y &&
-                                obj.width === newObj.width
-                            ) {
-                                // Merge with the adjacent block
-                                obj.height += newObj.height;
-                                merged = true;
-                                break;
-                            }
-                        }
-
-                        if (!merged) {
-                            levelObjects.push(newObj);
-                            colorPalette.add(currentColor);
-                        }
+                        levelObjects.push(newObj);
+                        colorPalette.add(currentColor);
                     }
 
                     drawObjects();
                     updateColorPalette();
                 }
             }
+
 
             function updateColor(event) {
                 currentColor = event.target.value;
@@ -192,7 +163,14 @@
 
             function exportLevel() {
                 const namedObjects = levelObjects.map(obj => {
+                    // Convert pixel coordinates to grid tile coordinates
+                    const gridX = Math.floor((obj.x - gridOffsetX) / gridSize);
+                    const gridY = Math.floor((obj.y - gridOffsetY) / gridSize);
+                    const gridWidth = Math.ceil(obj.width / gridSize);
+                    const gridHeight = Math.ceil(obj.height / gridSize);
+
                     let objectName = "default"; // Default object name
+
                     switch (obj.color) {
                         case "#000000":
                             objectName = "Ground";
@@ -230,17 +208,17 @@
                         case "#00cc00":
                             objectName = "LampPost";
                             break;
-                        
-                        
+
+
                         // Add more cases for different colors and names here
 
                     }
                     return {
                         name: objectName,
-                        x: obj.x,
-                        y: obj.y,
-                        width: obj.width,
-                        height: obj.height,
+                        x: gridX,
+                        y: gridY,
+                        width: gridWidth,
+                        height: gridHeight,
                         color: obj.color
                     };
                 });
@@ -272,7 +250,21 @@
                         colorPalette.clear();
 
                         importedData.forEach(obj => {
-                            levelObjects.push(obj);
+                            // Convert grid coordinates to pixels
+                            const x = obj.x * gridSize + gridOffsetX;
+                            const y = obj.y * gridSize + gridOffsetY;
+                            const width = obj.width * gridSize;
+                            const height = obj.height * gridSize;
+
+                            const newObj = {
+                                x: x,
+                                y: y,
+                                width: width,
+                                height: height,
+                                color: obj.color
+                            };
+
+                            levelObjects.push(newObj);
                             colorPalette.add(obj.color);
                         });
 
@@ -282,6 +274,7 @@
                     reader.readAsText(file);
                 }
             }
+
 
             function toggleEraser() {
                 isEraserActive = !isEraserActive;
@@ -336,11 +329,11 @@
                     const y = Math.min(startY, currentY);
 
                     ctx.fillStyle = isEraserActive ? "#FFFFFF" : currentColor;
-                    ctx.fillRect(x - gridOffsetX, y, width, height);
+                    ctx.fillRect(x - gridOffsetX, y - gridOffsetY, width, height);
 
                     ctx.strokeStyle = "#000000";
                     ctx.lineWidth = 1;
-                    ctx.strokeRect(x - gridOffsetX, y, width, height);
+                    ctx.strokeRect(x - gridOffsetX, y - gridOffsetY, width, height);
                 }
             });
 
