@@ -104,50 +104,11 @@
             function startDrawing(event) {
                 isDrawing = true;
                 startX = snapToGrid(event.clientX - canvas.offsetLeft) + gridOffsetX;
-                startY = snapToGrid(event.clientY - canvas.offsetTop);
+                startY = snapToGrid(event.clientY - canvas.offsetTop) + gridOffsetY;
                 currentX = startX;
                 currentY = startY;
             }
 
-            //   function stopDrawing() {
-            //     if (isDrawing) {
-            //       isDrawing = false;
-
-            //       const width = Math.abs(currentX - startX) + gridSize;
-            //       const height = Math.abs(currentY - startY) + gridSize;
-            //       const x = Math.min(startX, currentX);
-            //       const y = Math.min(startY, currentY);
-
-            //       if (isEraserActive) {
-            //         // Remove objects intersecting with the eraser rectangle
-            //         levelObjects.forEach((obj, index) => {
-            //           if (
-            //             obj.x < x + width &&
-            //             obj.x + obj.width > x &&
-            //             obj.y < y + height &&
-            //             obj.y + obj.height > y
-            //           ) {
-            //             levelObjects.splice(index, 1);
-            //             colorPalette.delete(obj.color);
-            //           }
-            //         });
-            //       } else {
-            //         const newObj = {
-            //           x: x,
-            //           y: y,
-            //           width: width,
-            //           height: height,
-            //           color: currentColor
-            //         };
-
-            //         levelObjects.push(newObj);
-            //         colorPalette.add(currentColor);
-            //       }
-
-            //       drawObjects();
-            //       updateColorPalette();
-            //     }
-            //   }
             function stopDrawing() {
                 if (isDrawing) {
                     isDrawing = false;
@@ -234,13 +195,44 @@
                     let objectName = "default"; // Default object name
                     switch (obj.color) {
                         case "#000000":
-                            objectName = "block";
+                            objectName = "Ground";
                             break;
                         case "#ff0000":
-                            objectName = "red_block";
+                            objectName = "Coin";
                             break;
+                        case "#00ff00":
+                            objectName = "HalfBlock";
+                            break;
+                        case "#0000ff":
+                            objectName = "HalfSpike";
+                            break;
+                        case "#aa00000":
+                            objectName = "JumpBoost";
+                            break;
+                        case "#00aa00":
+                            objectName = "JumpPad";
+                            break;
+                        case "#0000aa":
+                            objectName = "RandomSpikes";
+                            break;
+                        case "#bb0000":
+                            objectName = "Spike";
+                            break;
+                        case "#00bb00":
+                            objectName = "Square";
+                            break;
+                        case "#0000bb":
+                            objectName = "Tunnel";
+                            break;
+                        case "#cc0000":
+                            objectName = "Chain";
+                            break;
+                        case "#00cc00":
+                            objectName = "LampPost";
+                            break;
+                        
+                        
                         // Add more cases for different colors and names here
-                        // ...
 
                     }
                     return {
@@ -264,19 +256,6 @@
 
                 URL.revokeObjectURL(url);
             }
-
-            // function exportLevel() {
-            //   const levelData = JSON.stringify(levelObjects);
-            //   const blob = new Blob([levelData], { type: "text/plain" });
-            //   const url = URL.createObjectURL(blob);
-
-            //   const link = document.createElement("a");
-            //   link.href = url;
-            //   link.download = "level.txt";
-            //   link.click();
-
-            //   URL.revokeObjectURL(url);
-            // }
 
             function importLevel() {
                 const importInput = document.getElementById("importInput");
