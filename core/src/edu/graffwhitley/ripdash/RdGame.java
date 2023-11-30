@@ -38,7 +38,7 @@ public class RdGame extends ApplicationAdapter {
 	Sprite bgSprite;
 	float bgSpriteWidth = 61.64f;
 	float bgXPos = 0.0f;
-	float bgXPos2 = 61.64f;
+	float bgXPos2 = bgSpriteWidth;
 
 	ArrayList<StaticTile> staticTiles = new ArrayList<>();
 
@@ -104,8 +104,11 @@ public class RdGame extends ApplicationAdapter {
 		bgXPos -= parallaxSpeed;
 		bgXPos2 -= parallaxSpeed;
 
-		if (bgXPos + 61.64f < 0.0f) {
-			bgXPos = 61.64f;
+		if (bgXPos + bgSpriteWidth < 0.0f) {
+			bgXPos = bgSpriteWidth;
+		}
+		if (bgXPos2 + bgSpriteWidth < 0.0f) {
+			bgXPos2 = bgSpriteWidth;
 		}
 
 		world.step(1 / 60f, 6, 2);
