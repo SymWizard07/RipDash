@@ -1,6 +1,7 @@
-package edu.graffwhitley.ripdash.tiles;
+package edu.graffwhitley.ripdash.tiles.ground;
 
 import edu.graffwhitley.ripdash.graphics.SpritePool;
+import edu.graffwhitley.ripdash.tiles.StaticTile;
 
 public class GroundTile extends StaticTile {
 

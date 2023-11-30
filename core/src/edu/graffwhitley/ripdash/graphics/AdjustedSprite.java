@@ -7,7 +7,7 @@ public class AdjustedSprite extends Sprite {
     
     public final Vector2 offset;
 
-    AdjustedSprite(Sprite sprite, float offsetX, float offsetY) {
+    public AdjustedSprite(Sprite sprite, float offsetX, float offsetY) {
         super(sprite);
         this.offset = new Vector2(offsetX, offsetY);
     }

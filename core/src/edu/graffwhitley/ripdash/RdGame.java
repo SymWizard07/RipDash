@@ -5,14 +5,16 @@ import java.util.ArrayList;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-import edu.graffwhitley.ripdash.tiles.GroundTile;
+import edu.graffwhitley.ripdash.graphics.SpritePool;
 import edu.graffwhitley.ripdash.tiles.StaticTile;
+import edu.graffwhitley.ripdash.tiles.ground.GroundTile;
 import edu.graffwhitley.ripdash.tiles.spikes.SpikeTile;
 
 import com.badlogic.gdx.math.Vector2;
@@ -30,7 +32,13 @@ public class RdGame extends ApplicationAdapter {
 	Body playerBody;
 	Body triBody;
 
-	GroundTile ground;
+	Level activeLevel;
+
+	int bgSpriteIndex;
+	Sprite bgSprite;
+	float bgSpriteWidth = 61.64f;
+	float bgXPos = 0.0f;
+	float bgXPos2 = 61.64f;
 
 	ArrayList<StaticTile> staticTiles = new ArrayList<>();
 
@@ -42,9 +50,11 @@ public class RdGame extends ApplicationAdapter {
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 48, 27);
-		camera.position.set(0, 0, 0);
+		camera.position.set(0, -25.0f, 0);
 
 		batch.setProjectionMatrix(camera.combined);
+
+		bgSpriteIndex = SpritePool.addSprite("./Details/Background.png");
 
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
@@ -60,15 +70,7 @@ public class RdGame extends ApplicationAdapter {
 		fixtureDef.density = 1.0f;
 		playerBody.createFixture(fixtureDef);
 
-		// Ground
-
-		staticTiles.add(new GroundTile(GroundTile.BRICK, 2, 0));
-		staticTiles.add(new GroundTile(GroundTile.SQUARE, 0, 0));
-		staticTiles.add(new SpikeTile(SpikeTile.SPIKE, 2, 2));
-
-		for (StaticTile staticTile : staticTiles) {
-			staticTile.createTile(world);
-		}
+		activeLevel = LevelLoader.readLevel("./Levels/TestLevel1.json", world);
 		
 		// Debug Cam
 		debugRenderer = new Box2DDebugRenderer();
@@ -82,15 +84,28 @@ public class RdGame extends ApplicationAdapter {
 		debugRenderer.render(world, camera.combined);
 
 		batch.begin();
+
+		batch.setColor(0.0f, 0.4f, 0.8f, 1);
+		batch.draw(SpritePool.getSprite(bgSpriteIndex), bgXPos, 0, 61.64f, 27.0f);
+		batch.draw(SpritePool.getSprite(bgSpriteIndex), bgXPos2, 0, 61.64f, 27.0f);
+		batch.setColor(Color.WHITE);
 		
-		for (StaticTile staticTile : staticTiles) {
-			staticTile.draw(batch);
-		}
+		activeLevel.drawObjects(batch, camera);
 
 		batch.end();
 		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 			playerBody.setLinearVelocity(0, 40.0f);
 			playerBody.setAngularVelocity(-6.0f);
+		}
+
+		camera.position.add(0.3f, 0f, 0f);
+
+		float parallaxSpeed = 0.05f;
+		bgXPos -= parallaxSpeed;
+		bgXPos2 -= parallaxSpeed;
+
+		if (bgXPos + 61.64f < 0.0f) {
+			bgXPos = 61.64f;
 		}
 
 		world.step(1 / 60f, 6, 2);

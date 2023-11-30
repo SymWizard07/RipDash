@@ -1,25 +1,93 @@
 package edu.graffwhitley.ripdash;
 
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.physics.box2d.World;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import edu.graffwhitley.ripdash.tiles.StaticTile;
+import edu.graffwhitley.ripdash.tiles.ground.GroundTile;
+import edu.graffwhitley.ripdash.tiles.ground.HalfGroundTile;
+import edu.graffwhitley.ripdash.tiles.spikes.SpikeTile;
 
 public class LevelLoader {
 
-    private LevelLoader() {
+    private LevelLoader() {}
+
+    private static String readLevelFile(String directoryPath) {
+        return Gdx.files.internal(directoryPath).readString();
     }
 
-    public void readFilesInDirectory(String directoryPath) {
-        // Get the FileHandle for the directory
-        FileHandle dirHandle = Gdx.files.internal(directoryPath);
+    private static Level parseToObjects(String levelJsonString, World world) {
+        Level level = new Level();
+        Gson gson = new Gson();
 
-        // List all files in the directory
-        FileHandle[] files = dirHandle.list();
+        // Don't ask
+        Type type = new TypeToken<List<Map<String, Object>>>(){}.getType();
+        List<Map<String, Object>> list = gson.fromJson(levelJsonString, type);
 
-        // Iterate through the files
-        for (FileHandle file : files) {
-            String contents = file.readString();
-            System.out.println("File: " + file.name() + ", Contents: " + contents);
+        LevelObject nextObject;
+
+        for (Map<String, Object> item : list) {
+            nextObject = null;
+            float x = ((Double)item.get("x")).floatValue() * 2.0f;
+            float y = ((Double)item.get("y")).floatValue() * -2.0f;
+
+            switch ((String)item.get("name")) {
+                case "Ground":
+                    nextObject = new GroundTile(GroundTile.BRICK, x, y);
+                    break;
+                case "Coin":
+                    //nextObject = new CoinPickup();
+                    break;
+                case "HalfBlock":
+                    nextObject = new HalfGroundTile(HalfGroundTile.HALF_SQUARE, x, y);
+                    break;
+                case "HalfSpike":
+                    //nextObject = new HalfSpikeTile();
+                    break;
+                case "JumpBoost":
+                    //nextObject = new JumpBoostTile();
+                    break;
+                case "JumpPad":
+                    //nextObject = new JumpPadTile();
+                    break;
+                case "RandomSpikes":
+                    //nextObject = new RandomSpikesTile();
+                    break;
+                case "Spike":
+                    nextObject = new SpikeTile(SpikeTile.SPIKE, x, y);
+                    break;
+                case "Square":
+                    nextObject = new GroundTile(GroundTile.SQUARE, x, y);
+                    break;
+                case "Tunnel":
+                    //nextObject = new CharacterTransformer();
+                    break;
+                case "Chain":
+                    //nextObject = new ChainBgTile();
+                    break;
+                case "LampPost":
+                    //nextObject = new LampPostBgTile();
+                    break;
+            }
+            if (nextObject != null) {
+                level.addObject(nextObject);
+            }
+            if (nextObject instanceof StaticTile) {
+                ((StaticTile)nextObject).createTile(world);
+            }
         }
+
+        return level;
     }
 
+    public static Level readLevel(String directoryPath, World world) {
+        String levelJSON = readLevelFile(directoryPath);
+        return parseToObjects(levelJSON, world);
+    }
 }
