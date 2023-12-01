@@ -35,7 +35,7 @@ public class LevelLoader {
         for (Map<String, Object> item : list) {
             nextObject = null;
             float x = ((Double)item.get("x")).floatValue() * 2.0f;
-            float y = ((Double)item.get("y")).floatValue() * -2.0f;
+            float y = ((Double)item.get("y")).floatValue() * -2.0f + 3;
 
             switch ((String)item.get("name")) {
                 case "Ground":
@@ -82,6 +82,10 @@ public class LevelLoader {
                 ((StaticTile)nextObject).createTile(world);
             }
         }
+
+        level.addObject(new LevelGround(world, -24));
+        level.addObject(new LevelGround(world, 24));
+
 
         return level;
     }
