@@ -76,7 +76,7 @@ public class RdGame extends ApplicationAdapter {
 		// Debug Cam
 		debugRenderer = new Box2DDebugRenderer();
 
-		MusicPlayer.playMusic("C:/Users/reaga/source/repos/RipDash/assets/Sounds/RipDash.wav");
+		MusicPlayer.playMusic("./Sounds/RipDash.wav");
 
 	}
 
