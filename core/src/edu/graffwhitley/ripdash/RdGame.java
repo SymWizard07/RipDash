@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import edu.graffwhitley.ripdash.Music.MusicPlayer;
 import edu.graffwhitley.ripdash.graphics.SpritePool;
 import edu.graffwhitley.ripdash.tiles.StaticTile;
 import edu.graffwhitley.ripdash.tiles.ground.GroundTile;
@@ -74,6 +75,9 @@ public class RdGame extends ApplicationAdapter {
 		
 		// Debug Cam
 		debugRenderer = new Box2DDebugRenderer();
+
+		MusicPlayer.playMusic("C:/Users/reaga/source/repos/RipDash/assets/Sounds/RipDash.wav");
+
 	}
 
 	@Override
