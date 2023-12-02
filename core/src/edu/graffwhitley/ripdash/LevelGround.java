@@ -19,7 +19,7 @@ public class LevelGround implements LevelObject {
 
     public LevelGround(World world, float x) {
         PolygonShape bodyShape = new PolygonShape();
-		bodyShape.setAsBox(24f, 2.5f);
+		bodyShape.setAsBox(24f, 8.12f);
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.position.set(new Vector2(x, -40f));
 		bodyDef.type = BodyDef.BodyType.StaticBody;
@@ -28,7 +28,6 @@ public class LevelGround implements LevelObject {
 		body.createFixture(bodyShape, 0.0f);
 
         sprite = new Sprite(new Texture(Gdx.files.internal("./Details/Ground.png")));
-        System.out.println(sprite);
     }
 
     @Override
@@ -40,5 +39,8 @@ public class LevelGround implements LevelObject {
             body.setTransform(body.getPosition().x + 48f * 2, -40f, body.getAngle());
         }
     }
+
+    @Override
+    public void createBody(World world) {}
     
 }

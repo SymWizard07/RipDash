@@ -29,7 +29,7 @@ public abstract class StaticTile implements LevelObject {
 		this.sprite = new Sprite(SpritePool.getSprite(poolIndex));
 	}
 
-	public void createTile(World world) {
+	public void createBody(World world) {
 		body = world.createBody(bodyDef);
 		body.createFixture(bodyShape, 0.0f);
 	}

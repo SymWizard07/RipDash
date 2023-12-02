@@ -9,6 +9,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import edu.graffwhitley.ripdash.character.CharacterType;
+import edu.graffwhitley.ripdash.character.SliderCharacter;
 import edu.graffwhitley.ripdash.tiles.StaticTile;
 import edu.graffwhitley.ripdash.tiles.ground.GroundTile;
 import edu.graffwhitley.ripdash.tiles.ground.HalfGroundTile;
@@ -77,15 +79,16 @@ public class LevelLoader {
             }
             if (nextObject != null) {
                 level.addObject(nextObject);
-            }
-            if (nextObject instanceof StaticTile) {
-                ((StaticTile)nextObject).createTile(world);
+                nextObject.createBody(world);
             }
         }
 
         level.addObject(new LevelGround(world, -24));
         level.addObject(new LevelGround(world, 24));
 
+        CharacterType player = new SliderCharacter(-300, -28);
+		player.createBody(world);
+		level.addObject(player);
 
         return level;
     }

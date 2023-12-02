@@ -12,12 +12,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-import edu.graffwhitley.ripdash.Music.MusicPlayer;
+import edu.graffwhitley.ripdash.character.SliderCharacter;
 import edu.graffwhitley.ripdash.graphics.SpritePool;
+import edu.graffwhitley.ripdash.music.MusicPlayer;
 import edu.graffwhitley.ripdash.tiles.StaticTile;
-import edu.graffwhitley.ripdash.tiles.ground.GroundTile;
-import edu.graffwhitley.ripdash.tiles.spikes.SpikeTile;
-
 import com.badlogic.gdx.math.Vector2;
 
 import com.badlogic.gdx.physics.box2d.*;
@@ -57,20 +55,6 @@ public class RdGame extends ApplicationAdapter {
 
 		bgSpriteIndex = SpritePool.addSprite("./Details/Background.png");
 
-		BodyDef bodyDef = new BodyDef();
-		bodyDef.type = BodyType.DynamicBody;
-		bodyDef.position.set(0, 0);
-
-		playerBody = world.createBody(bodyDef);
-
-		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(1, 1);
-
-		FixtureDef fixtureDef = new FixtureDef();
-		fixtureDef.shape = shape;
-		fixtureDef.density = 1.0f;
-		playerBody.createFixture(fixtureDef);
-
 		activeLevel = LevelLoader.readLevel("./Levels/TestLevel1.json", world);
 		
 		// Debug Cam
@@ -85,7 +69,6 @@ public class RdGame extends ApplicationAdapter {
 		ScreenUtils.clear(0.0f, 0.4f, 0.8f, 1);
 
 		camera.update();
-		debugRenderer.render(world, camera.combined);
 
 		batch.begin();
 
@@ -93,14 +76,12 @@ public class RdGame extends ApplicationAdapter {
 		batch.draw(SpritePool.getSprite(bgSpriteIndex), bgXPos, 0, 61.64f, 27.0f);
 		batch.draw(SpritePool.getSprite(bgSpriteIndex), bgXPos2, 0, 61.64f, 27.0f);
 		batch.setColor(Color.WHITE);
-		
+
 		activeLevel.drawObjects(batch, camera);
 
 		batch.end();
-		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-			playerBody.setLinearVelocity(0, 40.0f);
-			playerBody.setAngularVelocity(-6.0f);
-		}
+
+		debugRenderer.render(world, camera.combined);
 
 		camera.position.add(0.3f, 0f, 0f);
 
@@ -121,6 +102,5 @@ public class RdGame extends ApplicationAdapter {
 	@Override
 	public void dispose() {
 		batch.dispose();
-		img.dispose();
 	}
 }
