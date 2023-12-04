@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 import edu.graffwhitley.ripdash.character.SliderCharacter;
 import edu.graffwhitley.ripdash.graphics.SpritePool;
-import edu.graffwhitley.ripdash.music.MusicPlayer;
+import edu.graffwhitley.ripdash.Music.MusicPlayer;
 import edu.graffwhitley.ripdash.tiles.StaticTile;
 import com.badlogic.gdx.math.Vector2;
 
