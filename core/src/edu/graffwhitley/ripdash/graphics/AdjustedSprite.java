@@ -12,4 +12,9 @@ public class AdjustedSprite extends Sprite {
         this.offset = new Vector2(offsetX, offsetY);
     }
 
+    public AdjustedSprite(AdjustedSprite sprite) {
+        super((Sprite)sprite);
+        this.offset = sprite.offset.cpy();
+    }
+
 }

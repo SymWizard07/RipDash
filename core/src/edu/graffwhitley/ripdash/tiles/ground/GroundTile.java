@@ -1,5 +1,6 @@
 package edu.graffwhitley.ripdash.tiles.ground;
 
+import edu.graffwhitley.ContactType;
 import edu.graffwhitley.ripdash.graphics.SpritePool;
 import edu.graffwhitley.ripdash.tiles.StaticTile;
 
@@ -10,6 +11,7 @@ public class GroundTile extends StaticTile {
 
     public GroundTile(int poolIndex, float x, float y) {
         super(poolIndex, x, y);
+        contactType = ContactType.GROUND;
     }
 
 }

@@ -11,7 +11,6 @@ import com.google.gson.reflect.TypeToken;
 
 import edu.graffwhitley.ripdash.character.CharacterType;
 import edu.graffwhitley.ripdash.character.SliderCharacter;
-import edu.graffwhitley.ripdash.tiles.StaticTile;
 import edu.graffwhitley.ripdash.tiles.ground.GroundTile;
 import edu.graffwhitley.ripdash.tiles.ground.HalfGroundTile;
 import edu.graffwhitley.ripdash.tiles.spikes.SpikeTile;

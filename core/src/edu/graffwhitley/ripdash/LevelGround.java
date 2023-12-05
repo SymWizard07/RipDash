@@ -12,6 +12,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
+import edu.graffwhitley.ContactType;
+
 public class LevelGround implements LevelObject {
 
     private Body body;
@@ -26,6 +28,8 @@ public class LevelGround implements LevelObject {
 
         body = world.createBody(bodyDef);
 		body.createFixture(bodyShape, 0.0f);
+
+        body.setUserData(ContactType.GROUND);
 
         sprite = new Sprite(new Texture(Gdx.files.internal("./Details/Ground.png")));
     }

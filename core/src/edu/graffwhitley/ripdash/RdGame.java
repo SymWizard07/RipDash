@@ -3,30 +3,31 @@ package edu.graffwhitley.ripdash;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-import edu.graffwhitley.ripdash.character.SliderCharacter;
 import edu.graffwhitley.ripdash.graphics.SpritePool;
-import edu.graffwhitley.ripdash.Music.MusicPlayer;
+import edu.graffwhitley.ripdash.music.MusicPlayer;
 import edu.graffwhitley.ripdash.tiles.StaticTile;
 import com.badlogic.gdx.math.Vector2;
 
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public class RdGame extends ApplicationAdapter {
+
+	public static final boolean DEBUG_MODE = false;
+
 	SpriteBatch batch;
 	Texture img;
 	World world;
 	OrthographicCamera camera;
 	Box2DDebugRenderer debugRenderer;
+	BitmapFont debugFont;
 
 	Body playerBody;
 	Body triBody;
@@ -58,8 +59,11 @@ public class RdGame extends ApplicationAdapter {
 		activeLevel = LevelLoader.readLevel("./Levels/level(4).json", world);
 		
 		// Debug Cam
-		debugRenderer = new Box2DDebugRenderer();
-
+		if (DEBUG_MODE) {
+			debugRenderer = new Box2DDebugRenderer();
+			debugFont = new BitmapFont();
+		}
+		
 		MusicPlayer.playMusic("./Sounds/RipDash.wav");
 
 	}
@@ -79,9 +83,12 @@ public class RdGame extends ApplicationAdapter {
 
 		activeLevel.drawObjects(batch, camera);
 
+
 		batch.end();
 
-		debugRenderer.render(world, camera.combined);
+		if (DEBUG_MODE) {
+			debugRenderer.render(world, camera.combined);
+		}
 
 		camera.position.add(0.3f, 0f, 0f);
 
