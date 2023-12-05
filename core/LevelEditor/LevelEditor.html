@@ -7,9 +7,9 @@
     <style>
         #grid {
             display: grid;
-            grid-template-columns: repeat(20, 30px);
+            grid-template-columns: repeat(35, 30px);
             /* expanded to 20 columns */
-            grid-template-rows: repeat(15, 30px);
+            grid-template-rows: repeat(22, 30px);
             /* expanded to 15 rows */
             gap: 1px;
             margin-bottom: 10px;
@@ -55,8 +55,8 @@
     <button onclick="importFromJson()">Import</button>
 
     <script>
-        const gridSizeX = 20; // expanded to 20
-        const gridSizeY = 15; // expanded to 15
+        const gridSizeX = 35;
+        const gridSizeY = 22;
         const grid = document.getElementById('grid');
         const colors = {
             "#000000": "Ground",
@@ -173,4 +173,5 @@
         createColorPalette();
     </script>
 </body>
+
 </html>
