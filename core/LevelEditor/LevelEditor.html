@@ -1,378 +1,176 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <title>Level Editor</title>
     <style>
-        canvas {
-            border: 1px solid black;
-            cursor: crosshair;
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(20, 30px);
+            /* expanded to 20 columns */
+            grid-template-rows: repeat(15, 30px);
+            /* expanded to 15 rows */
+            gap: 1px;
+            margin-bottom: 10px;
         }
 
-        .color-palette {
+        .grid-cell {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+        }
+
+        #colorPalette {
             display: flex;
-            margin-top: 10px;
+            margin-bottom: 10px;
         }
 
-        .color-palette button {
+        .color-swatch {
             width: 30px;
             height: 30px;
             margin-right: 5px;
-            border: none;
+            border: 1px solid #000;
             cursor: pointer;
         }
 
-        .eraser-button {
-            margin-left: 10px;
-            background-color: #f8f8f8;
-            color: #888888;
-        }
-
-        .eraser-button.active {
-            background-color: #888888;
-            color: #f8f8f8;
-        }
-
-        .move-button {
-            margin-left: 10px;
+        button {
+            margin-right: 5px;
         }
     </style>
 </head>
 
 <body>
-    <canvas id="levelEditorCanvas" width="800" height="600"></canvas>
-    <button id="exportButton">Export Level</button>
-    <input type="file" id="importInput" accept=".txt, .json" style="display: none;">
-    <button id="importButton">Import Level</button>
-    <input type="color" id="colorPicker">
-    <button id="clearButton">Clear</button>
-    <div class="color-palette"></div>
-    <button id="eraserButton" class="eraser-button">Eraser</button>
-    <button id="moveLeftButton" class="move-button">Move Left</button>
-    <button id="moveRightButton" class="move-button">Move Right</button>
-    <button id="moveUpButton" class="up-button">Move Up</button>
-    <button id="moveDownButton" class="down-button">Move Down</button>
+    <div id="colorPalette"></div>
+    <div id="grid" oncontextmenu="return false;"></div>
+    <div id="controls">
+        <button onclick="moveCamera('up')">Up</button>
+        <button onclick="moveCamera('down')">Down</button>
+        <button onclick="moveCamera('left')">Left</button>
+        <button onclick="moveCamera('right')">Right</button>
+    </div>
+    <button onclick="exportToJson()">Export</button>
+    <input type="file" id="fileInput">
+    <button onclick="importFromJson()">Import</button>
+
     <script>
-        window.addEventListener("DOMContentLoaded", () => {
-            const canvas = document.getElementById("levelEditorCanvas");
-            const ctx = canvas.getContext("2d");
+        const gridSizeX = 20; // expanded to 20
+        const gridSizeY = 15; // expanded to 15
+        const grid = document.getElementById('grid');
+        const colors = {
+            "#000000": "Ground",
+            "#ff0000": "Coin",
+            "#00ff00": "HalfBlock",
+            "#0000ff": "HalfSpike",
+            "#aa0000": "JumpBoost",
+            "#00aa00": "JumpPad",
+            "#0000aa": "RandomSpikes",
+            "#bb0000": "Spike",
+            "#00bb00": "Square",
+            "#0000bb": "Tunnel",
+            "#cc0000": "Chain",
+            "#00cc00": "LampPost"
+        };
 
-            const gridSize = 32; // Size of each grid cell
-            const levelObjects = [];
-            const colorPalette = new Set(); // Set to store unique colors
+        let selectedColor = null;
+        let tiles = [];
+        let cameraX = 0, cameraY = 0;
 
-            let isDrawing = false;
-            let startX, startY;
-            let currentX, currentY;
-            let currentColor = "#000000";
-            let isEraserActive = false;
-            let gridOffsetX = 0;
-            let gridOffsetY = 0;
-
-            function snapToGrid(value) {
-                return Math.floor(value / gridSize) * gridSize;
-            }
-
-            function drawObjects() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                // Draw grid lines
-                ctx.strokeStyle = "#CCCCCC";
-                for (let x = -gridOffsetX % gridSize; x < canvas.width; x += gridSize) {
-                    ctx.beginPath();
-                    ctx.moveTo(x, 0);
-                    ctx.lineTo(x, canvas.height);
-                    ctx.stroke();
-                }
-                for (let y = -gridOffsetY % gridSize; y < canvas.height; y += gridSize) {
-                    ctx.beginPath();
-                    ctx.moveTo(0, y);
-                    ctx.lineTo(canvas.width, y);
-                    ctx.stroke();
-                }
-
-                // Draw level objects
-                for (const obj of levelObjects) {
-                    ctx.fillStyle = obj.color;
-                    ctx.fillRect(obj.x - gridOffsetX, obj.y - gridOffsetY, obj.width, obj.height);
-
-                    ctx.strokeStyle = "#000000";
-                    ctx.lineWidth = 1;
-                    ctx.strokeRect(obj.x - gridOffsetX, obj.y - gridOffsetY, obj.width, obj.height);
+        function createGrid() {
+            grid.innerHTML = '';
+            for (let y = cameraY; y < cameraY + gridSizeY; y++) {
+                for (let x = cameraX; x < cameraX + gridSizeX; x++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('grid-cell');
+                    cell.dataset.x = x;
+                    cell.dataset.y = y;
+                    cell.style.backgroundColor = getTileColor(x, y);
+                    cell.addEventListener('click', (event) => placeTile(x, y, event));
+                    cell.addEventListener('contextmenu', (event) => eraseTile(x, y, event));
+                    grid.appendChild(cell);
                 }
             }
+        }
 
-            function startDrawing(event) {
-                isDrawing = true;
-                startX = snapToGrid(event.clientX - canvas.offsetLeft) + gridOffsetX;
-                startY = snapToGrid(event.clientY - canvas.offsetTop) + gridOffsetY;
-                currentX = startX;
-                currentY = startY;
-            }
+        function createColorPalette() {
+            const colorPalette = document.getElementById('colorPalette');
+            colorPalette.innerHTML = '';
+            Object.keys(colors).forEach(color => {
+                const swatchContainer = document.createElement('div');
+                swatchContainer.classList.add('color-swatch-container');
 
-            function stopDrawing() {
-                if (isDrawing) {
-                    isDrawing = false;
+                const swatch = document.createElement('div');
+                swatch.classList.add('color-swatch');
+                swatch.style.backgroundColor = color;
+                swatch.addEventListener('click', () => selectedColor = color);
+                
+                const label = document.createElement('div');
+                label.classList.add('color-label');
+                label.textContent = colors[color];
 
-                    const width = Math.abs(currentX - startX) + gridSize;
-                    const height = Math.abs(currentY - startY) + gridSize;
-                    const x = Math.min(startX, currentX);
-                    const y = Math.min(startY, currentY);
-
-                    if (isEraserActive) {
-                        // Remove objects intersecting with the eraser rectangle
-                        levelObjects.forEach((obj, index) => {
-                            if (
-                                obj.x < x + width &&
-                                obj.x + obj.width > x &&
-                                obj.y < y + height &&
-                                obj.y + obj.height > y
-                            ) {
-                                levelObjects.splice(index, 1);
-                                colorPalette.delete(obj.color);
-                            }
-                        });
-                    } else {
-                        const newObj = {
-                            x: x,
-                            y: y,
-                            width: width,
-                            height: height,
-                            color: currentColor
-                        };
-
-                        levelObjects.push(newObj);
-                        colorPalette.add(currentColor);
-                    }
-
-                    drawObjects();
-                    updateColorPalette();
-                }
-            }
-
-
-            function updateColor(event) {
-                currentColor = event.target.value;
-            }
-
-            function clearLevel() {
-                levelObjects.length = 0;
-                colorPalette.clear();
-                drawObjects();
-                updateColorPalette();
-            }
-
-            function exportLevel() {
-                const namedObjects = levelObjects.map(obj => {
-                    // Convert pixel coordinates to grid tile coordinates
-                    const gridX = Math.floor((obj.x - gridOffsetX) / gridSize);
-                    const gridY = Math.floor((obj.y - gridOffsetY) / gridSize);
-                    const gridWidth = Math.ceil(obj.width / gridSize);
-                    const gridHeight = Math.ceil(obj.height / gridSize);
-
-                    let objectName = "default"; // Default object name
-
-                    switch (obj.color) {
-                        case "#000000":
-                            objectName = "Ground";
-                            break;
-                        case "#ff0000":
-                            objectName = "Coin";
-                            break;
-                        case "#00ff00":
-                            objectName = "HalfBlock";
-                            break;
-                        case "#0000ff":
-                            objectName = "HalfSpike";
-                            break;
-                        case "#aa00000":
-                            objectName = "JumpBoost";
-                            break;
-                        case "#00aa00":
-                            objectName = "JumpPad";
-                            break;
-                        case "#0000aa":
-                            objectName = "RandomSpikes";
-                            break;
-                        case "#bb0000":
-                            objectName = "Spike";
-                            break;
-                        case "#00bb00":
-                            objectName = "Square";
-                            break;
-                        case "#0000bb":
-                            objectName = "Tunnel";
-                            break;
-                        case "#cc0000":
-                            objectName = "Chain";
-                            break;
-                        case "#00cc00":
-                            objectName = "LampPost";
-                            break;
-
-
-                        // Add more cases for different colors and names here
-
-                    }
-                    return {
-                        name: objectName,
-                        x: gridX,
-                        y: gridY,
-                        width: gridWidth,
-                        height: gridHeight,
-                        color: obj.color
-                    };
-                });
-
-                const levelData = JSON.stringify(namedObjects);
-                const blob = new Blob([levelData], { type: "text/plain" });
-                const url = URL.createObjectURL(blob);
-
-                const link = document.createElement("a");
-                link.href = url;
-                link.download = "level.json";
-                link.click();
-
-                URL.revokeObjectURL(url);
-            }
-
-            function importLevel() {
-                const importInput = document.getElementById("importInput");
-                importInput.click();
-            }
-
-            function handleImport(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        const importedData = JSON.parse(e.target.result);
-                        levelObjects.length = 0;
-                        colorPalette.clear();
-
-                        importedData.forEach(obj => {
-                            // Convert grid coordinates to pixels
-                            const x = obj.x * gridSize + gridOffsetX;
-                            const y = obj.y * gridSize + gridOffsetY;
-                            const width = obj.width * gridSize;
-                            const height = obj.height * gridSize;
-
-                            const newObj = {
-                                x: x,
-                                y: y,
-                                width: width,
-                                height: height,
-                                color: obj.color
-                            };
-
-                            levelObjects.push(newObj);
-                            colorPalette.add(obj.color);
-                        });
-
-                        drawObjects();
-                        updateColorPalette();
-                    };
-
-                    // Read the file as text
-                    reader.readAsText(file);
-                }
-            }
-
-
-
-            function toggleEraser() {
-                isEraserActive = !isEraserActive;
-                eraserButton.classList.toggle("active");
-            }
-
-            function updateColorPalette() {
-                const colorPaletteContainer = document.querySelector(".color-palette");
-                colorPaletteContainer.innerHTML = "";
-
-                colorPalette.forEach(color => {
-                    const colorButton = document.createElement("button");
-                    colorButton.style.backgroundColor = color;
-                    colorButton.addEventListener("click", () => {
-                        currentColor = color;
-                    });
-                    colorPaletteContainer.appendChild(colorButton);
-                });
-            }
-
-            function moveLeft() {
-                gridOffsetX -= gridSize;
-                drawObjects();
-            }
-
-            function moveRight() {
-                gridOffsetX += gridSize;
-                drawObjects();
-            }
-
-            function moveUp() {
-                gridOffsetY -= gridSize;
-                drawObjects();
-            }
-
-            function moveDown() {
-                gridOffsetY += gridSize;
-                drawObjects();
-            }
-
-            canvas.addEventListener("mousedown", startDrawing);
-            canvas.addEventListener("mouseup", stopDrawing);
-            canvas.addEventListener("mousemove", event => {
-                if (isDrawing) {
-                    currentX = snapToGrid(event.clientX - canvas.offsetLeft) + gridOffsetX;
-                    currentY = snapToGrid(event.clientY - canvas.offsetTop) + gridOffsetY;
-                    drawObjects();
-
-                    const width = Math.abs(currentX - startX) + gridSize;
-                    const height = Math.abs(currentY - startY) + gridSize;
-                    const x = Math.min(startX, currentX);
-                    const y = Math.min(startY, currentY);
-
-                    ctx.fillStyle = isEraserActive ? "#FFFFFF" : currentColor;
-                    ctx.fillRect(x - gridOffsetX, y - gridOffsetY, width, height);
-
-                    ctx.strokeStyle = "#000000";
-                    ctx.lineWidth = 1;
-                    ctx.strokeRect(x - gridOffsetX, y - gridOffsetY, width, height);
-                }
+                swatchContainer.appendChild(swatch);
+                swatchContainer.appendChild(label);
+                colorPalette.appendChild(swatchContainer);
             });
+        }
 
-            const colorPicker = document.getElementById("colorPicker");
-            colorPicker.addEventListener("change", updateColor);
+        function placeTile(x, y, event) {
+            event.preventDefault(); // Prevent the grid context menu
+            if (!selectedColor) return;
+            tiles = tiles.filter(tile => tile.x !== x || tile.y !== y);
+            tiles.push({ objectName: colors[selectedColor], x, y });
+            createGrid();
+        }
 
-            const clearButton = document.getElementById("clearButton");
-            clearButton.addEventListener("click", clearLevel);
+        function eraseTile(x, y, event) {
+            event.preventDefault(); // Prevent the context menu
+            tiles = tiles.filter(tile => tile.x !== x || tile.y !== y);
+            createGrid();
+        }
 
-            const exportButton = document.getElementById("exportButton");
-            exportButton.addEventListener("click", exportLevel);
+        function getTileColor(x, y) {
+            const tile = tiles.find(tile => tile.x === x && tile.y === y);
+            return tile ? getKeyByValue(colors, tile.objectName) : '#fff';
+        }
 
-            const importButton = document.getElementById("importButton");
-            importButton.addEventListener("click", importLevel);
+        function getKeyByValue(object, value) {
+            return Object.keys(object).find(key => object[key] === value);
+        }
 
-            const importInput = document.getElementById("importInput");
-            importInput.addEventListener("change", handleImport);
+        function moveCamera(direction) {
+            switch (direction) {
+                case 'up': cameraY--; break;
+                case 'down': cameraY++; break; // Add bounds check as needed
+                case 'left': cameraX--; break;
+                case 'right': cameraX++; break; // Add bounds check as needed
+            }
+            createGrid();
+        }
 
+        function exportToJson() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tiles));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", "tiles.json");
+            dlAnchorElem.click();
+        }
 
-            const eraserButton = document.getElementById("eraserButton");
-            eraserButton.addEventListener("click", toggleEraser);
+        function importFromJson() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    tiles = JSON.parse(e.target.result);
+                    createGrid(); // Render tiles from imported data
+                };
+                reader.readAsText(file);
+            }
+        }
 
-            const moveLeftButton = document.getElementById("moveLeftButton");
-            moveLeftButton.addEventListener("click", moveLeft);
-
-            const moveRightButton = document.getElementById("moveRightButton");
-            moveRightButton.addEventListener("click", moveRight);
-
-            const moveUpButton = document.getElementById("moveUpButton");
-            moveUpButton.addEventListener("click", moveUp);
-
-            const moveDownButton = document.getElementById("moveDownButton");
-            moveDownButton.addEventListener("click", moveDown);
-
-            drawObjects();
-        });
+        createGrid();
+        createColorPalette();
     </script>
 </body>
 
