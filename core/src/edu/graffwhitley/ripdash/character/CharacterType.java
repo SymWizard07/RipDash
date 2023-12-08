@@ -2,7 +2,7 @@ package edu.graffwhitley.ripdash.character;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+//import java.util.Set;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Sprite;

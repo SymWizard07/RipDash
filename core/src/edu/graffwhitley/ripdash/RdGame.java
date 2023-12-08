@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import edu.graffwhitley.ripdash.graphics.SpritePool;
-import edu.graffwhitley.ripdash.music.MusicPlayer;
+import edu.graffwhitley.ripdash.Music.MusicPlayer;
 import edu.graffwhitley.ripdash.tiles.StaticTile;
 import com.badlogic.gdx.math.Vector2;
 
@@ -64,7 +64,7 @@ public class RdGame extends ApplicationAdapter {
 			debugFont = new BitmapFont();
 		}
 		
-		MusicPlayer.playMusic("./Sounds/RipDash.wav");
+		MusicPlayer.playMusic("./Sounds/RipDashFinal.wav");
 
 	}
 
