@@ -1,4 +1,4 @@
-package edu.graffwhitley.ripdash.Music;
+package edu.graffwhitley.ripdash.music;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;

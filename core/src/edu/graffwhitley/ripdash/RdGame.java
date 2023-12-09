@@ -11,8 +11,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import edu.graffwhitley.ripdash.character.CharacterType;
 import edu.graffwhitley.ripdash.graphics.SpritePool;
-import edu.graffwhitley.ripdash.Music.MusicPlayer;
+import edu.graffwhitley.ripdash.music.MusicPlayer;
 import edu.graffwhitley.ripdash.tiles.StaticTile;
 import com.badlogic.gdx.math.Vector2;
 
@@ -29,9 +30,7 @@ public class RdGame extends ApplicationAdapter {
 	Box2DDebugRenderer debugRenderer;
 	BitmapFont debugFont;
 
-	Body playerBody;
-	Body triBody;
-
+	String levelPath = "./Levels/level(4).json";
 	Level activeLevel;
 
 	int bgSpriteIndex;
@@ -40,7 +39,15 @@ public class RdGame extends ApplicationAdapter {
 	float bgXPos = 0.0f;
 	float bgXPos2 = bgSpriteWidth;
 
+	CharacterType character;
+
 	ArrayList<StaticTile> staticTiles = new ArrayList<>();
+
+	public void restartLevel() {
+		camera.position.set(0, -25.0f, 0);
+		activeLevel = LevelLoader.readLevel(levelPath, world);
+		character = activeLevel.getCharacter();
+	}
 
 	@Override
 	public void create() {
@@ -56,7 +63,9 @@ public class RdGame extends ApplicationAdapter {
 
 		bgSpriteIndex = SpritePool.addSprite("./Details/Background.png");
 
-		activeLevel = LevelLoader.readLevel("./Levels/level(4).json", world);
+		activeLevel = LevelLoader.readLevel(levelPath, world);
+
+		character = activeLevel.getCharacter();
 		
 		// Debug Cam
 		if (DEBUG_MODE) {
@@ -64,7 +73,7 @@ public class RdGame extends ApplicationAdapter {
 			debugFont = new BitmapFont();
 		}
 		
-		MusicPlayer.playMusic("./Sounds/RipDashFinal.wav");
+		MusicPlayer.playMusic("./Sounds/RipDash.wav");
 
 	}
 
@@ -83,8 +92,11 @@ public class RdGame extends ApplicationAdapter {
 
 		activeLevel.drawObjects(batch, camera);
 
-
 		batch.end();
+
+		if (!character.alive) {
+			restartLevel();
+		}
 
 		if (DEBUG_MODE) {
 			debugRenderer.render(world, camera.combined);

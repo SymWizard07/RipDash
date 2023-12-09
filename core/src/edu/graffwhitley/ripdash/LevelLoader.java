@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import edu.graffwhitley.CameraFocus;
 import edu.graffwhitley.ripdash.character.CharacterType;
 import edu.graffwhitley.ripdash.character.SliderCharacter;
 import edu.graffwhitley.ripdash.tiles.ground.GroundTile;
@@ -75,6 +76,11 @@ public class LevelLoader {
                 case "LampPost":
                     //nextObject = new LampPostBgTile();
                     break;
+                case "CharacterSpawner":
+                    nextObject = new SliderCharacter(x, y);
+                    break;
+                case "CameraFocus":
+                    nextObject = new CameraFocus(x, y);
             }
             if (nextObject != null) {
                 level.addObject(nextObject);
