@@ -21,7 +21,7 @@ import com.badlogic.gdx.physics.box2d.*;
 
 public class RdGame extends ApplicationAdapter {
 
-	public static final boolean DEBUG_MODE = false;
+	public static final boolean DEBUG_MODE = true;
 
 	SpriteBatch batch;
 	Texture img;
@@ -30,7 +30,7 @@ public class RdGame extends ApplicationAdapter {
 	Box2DDebugRenderer debugRenderer;
 	BitmapFont debugFont;
 
-	String levelPath = "./Levels/level(4).json";
+	String levelPath = "./Levels/tiles (25).json";
 	Level activeLevel;
 
 	int bgSpriteIndex;
