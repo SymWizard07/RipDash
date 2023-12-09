@@ -1,15 +1,10 @@
 package edu.graffwhitley.ripdash.character;
 
-import java.util.Map;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Fixture;
-
 import edu.graffwhitley.ContactType;
-import edu.graffwhitley.ripdash.LevelObject;
 import edu.graffwhitley.ripdash.graphics.SpritePool;
 
 public class SliderCharacter extends CharacterType {
