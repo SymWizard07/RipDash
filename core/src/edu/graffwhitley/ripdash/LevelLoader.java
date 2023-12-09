@@ -39,7 +39,7 @@ public class LevelLoader {
             float x = ((Double)item.get("x")).floatValue() * 2.0f;
             float y = ((Double)item.get("y")).floatValue() * -2.0f + 3;
 
-            switch ((String)item.get("name")) {
+            switch ((String)item.get("objectName")) {
                 case "Ground":
                     nextObject = new GroundTile(GroundTile.BRICK, x, y);
                     break;
