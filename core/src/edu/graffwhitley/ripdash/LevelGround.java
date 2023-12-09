@@ -14,14 +14,15 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import edu.graffwhitley.ContactType;
 
-public class LevelGround implements LevelObject {
+public class LevelGround extends LevelObject {
 
     private Body body;
     private Sprite sprite;
 
     public LevelGround(World world, float x) {
+        super(24.0f, 8.12f);
         PolygonShape bodyShape = new PolygonShape();
-		bodyShape.setAsBox(24f, 8.12f);
+		bodyShape.setAsBox(hSize.x, hSize.y);
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.position.set(new Vector2(x, -40f));
 		bodyDef.type = BodyDef.BodyType.StaticBody;
@@ -29,7 +30,9 @@ public class LevelGround implements LevelObject {
         body = world.createBody(bodyDef);
 		body.createFixture(bodyShape, 0.0f);
 
-        body.setUserData(ContactType.GROUND);
+        contactType = ContactType.GROUND;
+
+        body.setUserData(this);
 
         sprite = new Sprite(new Texture(Gdx.files.internal("./Details/Ground.png")));
     }

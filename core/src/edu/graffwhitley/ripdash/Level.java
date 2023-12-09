@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import edu.graffwhitley.ripdash.character.CharacterType;
+
 public class Level {
     
     private ArrayList<LevelObject> objects;
@@ -19,6 +21,16 @@ public class Level {
 
     public void removeObject(LevelObject object) {
         objects.remove(object);
+    }
+
+    public CharacterType getCharacter() {
+        for (LevelObject levelObject : objects) {
+            if (levelObject instanceof CharacterType) {
+                return (CharacterType)levelObject;
+            }
+        }
+
+        return null;
     }
 
     public void drawObjects(SpriteBatch batch, Camera camera) {

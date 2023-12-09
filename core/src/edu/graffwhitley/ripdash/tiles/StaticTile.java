@@ -14,17 +14,17 @@ import edu.graffwhitley.ripdash.LevelObject;
 import edu.graffwhitley.ripdash.graphics.AdjustedSprite;
 import edu.graffwhitley.ripdash.graphics.SpritePool;
 
-public abstract class StaticTile implements LevelObject {
+public abstract class StaticTile extends LevelObject {
 
 	protected PolygonShape bodyShape;
 	protected BodyDef bodyDef;
 	protected Body body;
 	protected AdjustedSprite sprite;
-	protected ContactType contactType;
 
 	public StaticTile(int poolIndex, float x, float y) {
+		super(1, 1);
 		bodyShape = new PolygonShape();
-		bodyShape.setAsBox(1, 1);
+		bodyShape.setAsBox(hSize.x, hSize.y);
 		bodyDef = new BodyDef();
 		bodyDef.position.set(new Vector2(x, y));
 		bodyDef.type = BodyDef.BodyType.StaticBody;
@@ -37,10 +37,10 @@ public abstract class StaticTile implements LevelObject {
 	public void createBody(World world) {
 		body = world.createBody(bodyDef);
 		body.createFixture(bodyShape, 0.0f);
-		body.setUserData(contactType);
+		body.setUserData(this);
 	}
 
 	public void draw(SpriteBatch batch, Camera camera) {
-		batch.draw(sprite, body.getPosition().x + sprite.offset.x - camera.position.x, body.getPosition().y + sprite.offset.y - camera.position.y, 2, 2);
+		batch.draw(sprite, body.getPosition().x + sprite.offset.x - camera.position.x, body.getPosition().y + sprite.offset.y - camera.position.y, hSize.x * 2, hSize.y * 2);
 	}
 }

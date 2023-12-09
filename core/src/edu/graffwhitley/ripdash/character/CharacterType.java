@@ -1,5 +1,6 @@
 package edu.graffwhitley.ripdash.character;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 //import java.util.Set;
@@ -20,34 +21,41 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import edu.graffwhitley.ContactType;
+import edu.graffwhitley.ripdash.Level;
 import edu.graffwhitley.ripdash.LevelObject;
 import edu.graffwhitley.ripdash.graphics.SpritePool;
 
-public abstract class CharacterType implements LevelObject {
+public abstract class CharacterType extends LevelObject {
 
     protected PolygonShape bodyShape;
     protected BodyDef bodyDef;
     protected Body body;
     protected Sprite sprite;
     protected float xProgress;
-    protected Map<Fixture, ContactType> contactMap = new HashMap<>();
+    protected ArrayList<Body> activeContacts;
+    public boolean alive;
 
     public CharacterType(int poolIndex, float x, float y) {
+        super(0.9f, 0.9f);
         bodyShape = new PolygonShape();
-        bodyShape.setAsBox(0.9f, 0.9f);
+        bodyShape.setAsBox(hSize.x, hSize.y);
         bodyDef = new BodyDef();
         bodyDef.position.set(new Vector2(x, y));
         bodyDef.type = BodyDef.BodyType.DynamicBody;
 
+        contactType = ContactType.PLAYER;
+        activeContacts = new ArrayList<>();
+
         this.sprite = new Sprite(SpritePool.getSprite(poolIndex));
 
         xProgress = 0.0f;
+        alive = true;
     }
 
     public void createBody(World world) {
         body = world.createBody(bodyDef);
         body.createFixture(bodyShape, 1.0f);
-        body.setUserData(ContactType.PLAYER);
+        body.setUserData(this);
 
         world.setContactListener(new ContactListener() {
             @Override
@@ -56,17 +64,17 @@ public abstract class CharacterType implements LevelObject {
                 Fixture fixtureB = contact.getFixtureB();
                 Fixture checkFixture;
 
-                if ("player".equals(fixtureA.getBody().getUserData())) {
+                if (((LevelObject)fixtureA.getBody().getUserData()).contactType == ContactType.PLAYER) {
                     checkFixture = fixtureB;
                 } else {
                     checkFixture = fixtureA;
                 }
 
-                if (checkFixture.getBody().getUserData() == null) {
+                if (((LevelObject)checkFixture.getBody().getUserData()).contactType == null) {
                     return;
                 }
 
-                contactMap.put(checkFixture, (ContactType)checkFixture.getBody().getUserData());
+                activeContacts.add(checkFixture.getBody());
             }
 
             @Override
@@ -75,17 +83,17 @@ public abstract class CharacterType implements LevelObject {
                 Fixture fixtureB = contact.getFixtureB();
                 Fixture checkFixture;
 
-                if ("player".equals(fixtureA.getBody().getUserData())) {
+                if ((((LevelObject)(fixtureA.getBody().getUserData())).contactType) == ContactType.PLAYER) {
                     checkFixture = fixtureB;
                 } else {
                     checkFixture = fixtureA;
                 }
 
-                if (checkFixture.getBody().getUserData() == null) {
+                if (((LevelObject)(checkFixture.getBody().getUserData())).contactType == null) {
                     return;
                 }
 
-                contactMap.remove(checkFixture);
+                activeContacts.remove(checkFixture.getBody());
             }
 
             @Override
@@ -102,13 +110,25 @@ public abstract class CharacterType implements LevelObject {
     }
 
     protected boolean isContacting(ContactType contactType) {
-        return contactMap.containsValue(contactType);
+        for (Body body : activeContacts) {
+            if (((LevelObject)(body.getUserData())).contactType == contactType) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void kill() {
+        alive = false;
     }
 
     public void draw(SpriteBatch batch, Camera camera) {
+        if (!alive) {
+            return;
+        }
         update();
 
-        sprite.setSize(1.8f, 1.8f);
+        sprite.setSize(hSize.x * 2, hSize.y * 2);
         sprite.setOriginCenter();
         sprite.setPosition(body.getPosition().x + 23.1f - camera.position.x,
                 body.getPosition().y + 12.6f - camera.position.y);
