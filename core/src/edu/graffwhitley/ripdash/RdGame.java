@@ -56,7 +56,7 @@ public class RdGame extends ApplicationAdapter {
 
 		bgSpriteIndex = SpritePool.addSprite("./Details/Background.png");
 
-		activeLevel = LevelLoader.readLevel("./Levels/level(4).json", world);
+		activeLevel = LevelLoader.readLevel("./Levels/tiles (17).json", world);
 		
 		// Debug Cam
 		if (DEBUG_MODE) {
