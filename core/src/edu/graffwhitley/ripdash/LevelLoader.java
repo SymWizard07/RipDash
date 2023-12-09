@@ -48,6 +48,9 @@ public class LevelLoader {
                 case "HalfBlock":
                     nextObject = new HalfGroundTile(HalfGroundTile.HALF_SQUARE, x, y);
                     break;
+                case "HalfBlockBottom":
+                    nextObject = new HalfGroundTile(HalfGroundTile.HALF_SQUARE_BOTTOM, x, y);
+                    break;
                 case "HalfSpike":
                     //nextObject = new HalfSpikeTile();
                     break;
@@ -78,6 +81,12 @@ public class LevelLoader {
                 case "CharacterStart":
                     break;
                 case "FinishLine":
+                    break;
+                case "FlippedSpike":
+                    nextObject = new SpikeTile(SpikeTile.FLIPPEDSPIKE, x, y);
+                    break;
+                case "FlippedHalfSpike":
+                    nextObject = new SpikeTile(SpikeTile.FLIPPEDHALFSPIKE, x, y);
                     break;
             }
             if (nextObject != null) {
