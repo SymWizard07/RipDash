@@ -9,7 +9,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
-import edu.graffwhitley.ContactType;
 import edu.graffwhitley.ripdash.LevelObject;
 import edu.graffwhitley.ripdash.graphics.AdjustedSprite;
 import edu.graffwhitley.ripdash.graphics.SpritePool;
