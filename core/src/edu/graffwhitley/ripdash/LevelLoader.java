@@ -84,6 +84,11 @@ public class LevelLoader {
                     break;
                 case "CameraFocus":
                     nextObject = new CameraFocus(x, y);
+                case "FlippedHalfSpike":
+                    nextObject = new SpikeTile(SpikeTile.FLIPPEDHALFSPIKE, x, y); 
+                case "FlippedSpike":
+                    nextObject = new SpikeTile(SpikeTile.FLIPPEDSPIKE, x, y);
+                
             }
             if (nextObject != null) {
                 level.addObject(nextObject);
