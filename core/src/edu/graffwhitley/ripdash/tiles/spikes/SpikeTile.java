@@ -20,5 +20,5 @@ public class SpikeTile extends StaticTile {
         bodyShape.set(new Vector2[] {vertex1, vertex2, vertex3});
         
     }
-    
+
 }
