@@ -30,7 +30,7 @@ public class RdGame extends ApplicationAdapter {
 	Box2DDebugRenderer debugRenderer;
 	BitmapFont debugFont;
 
-	String levelPath = "./Levels/tiles.json";
+	String levelPath = "./Levels/tiles (1).json";
 	Level activeLevel;
 
 	int bgSpriteIndex;
