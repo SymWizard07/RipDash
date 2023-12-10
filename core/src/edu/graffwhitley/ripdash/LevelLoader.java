@@ -14,6 +14,8 @@ import edu.graffwhitley.ripdash.character.CharacterType;
 import edu.graffwhitley.ripdash.character.SliderCharacter;
 import edu.graffwhitley.ripdash.tiles.ground.GroundTile;
 import edu.graffwhitley.ripdash.tiles.ground.HalfGroundTile;
+import edu.graffwhitley.ripdash.tiles.spikes.FlippedHalfSpikeTile;
+import edu.graffwhitley.ripdash.tiles.spikes.FlippedSpikeTile;
 import edu.graffwhitley.ripdash.tiles.spikes.HalfSpikeTile;
 import edu.graffwhitley.ripdash.tiles.spikes.SpikeTile;
 
@@ -85,10 +87,13 @@ public class LevelLoader {
                     break;
                 case "CameraFocus":
                     nextObject = new CameraFocus(x, y);
+                    break;
                 case "FlippedHalfSpike":
-                    nextObject = new SpikeTile(HalfSpikeTile.FLIPPEDHALFSPIKE, x, y); 
+                    nextObject = new FlippedHalfSpikeTile(FlippedHalfSpikeTile.HALFFLIPPEDSPIKE, x, y); 
+                    break; 
                 case "FlippedSpike":
-                    nextObject = new SpikeTile(SpikeTile.FLIPPEDSPIKE, x, y);
+                    nextObject = new FlippedSpikeTile(FlippedSpikeTile.FLIPPEDSPIKE, x, y);
+                    break;
                 
             }
             if (nextObject != null) {

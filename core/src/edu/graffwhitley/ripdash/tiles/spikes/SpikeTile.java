@@ -9,7 +9,6 @@ import edu.graffwhitley.ripdash.tiles.StaticTile;
 public class SpikeTile extends StaticTile {
 
     public static final int SPIKE = SpritePool.addSprite("./Collision/Spike.png", 23.0f, 12.5f);
-    public static final int FLIPPEDSPIKE = SpritePool.addSprite("./Collision/FlippedSpike.png", 23.0f, 12.5f);
 
     public SpikeTile(int poolIndex, float x, float y) {
         super(poolIndex, x, y);
@@ -19,7 +18,6 @@ public class SpikeTile extends StaticTile {
 
         bodyShape = new PolygonShape();
         bodyShape.set(new Vector2[] {vertex1, vertex2, vertex3});
-
         
     }
     
