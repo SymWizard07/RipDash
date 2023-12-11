@@ -6,5 +6,6 @@ public enum ContactType {
     GROUND_BOOST,
     AIR_BOOST,
     TRANSFORM,
-    SPIKE
+    SPIKE,
+    COIN
 }

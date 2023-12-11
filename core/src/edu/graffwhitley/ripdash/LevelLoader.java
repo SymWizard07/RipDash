@@ -11,12 +11,20 @@ import com.google.gson.reflect.TypeToken;
 
 import edu.graffwhitley.CameraFocus;
 import edu.graffwhitley.ripdash.character.CharacterType;
+import edu.graffwhitley.ripdash.character.ShipCharacter;
 import edu.graffwhitley.ripdash.character.SliderCharacter;
+import edu.graffwhitley.ripdash.objects.CharacterTransformer;
+import edu.graffwhitley.ripdash.objects.background.ChainBgObj;
+import edu.graffwhitley.ripdash.objects.background.LampPostBgObj;
 import edu.graffwhitley.ripdash.tiles.ground.GroundTile;
 import edu.graffwhitley.ripdash.tiles.ground.HalfGroundTile;
+import edu.graffwhitley.ripdash.tiles.special.CoinPickup;
+import edu.graffwhitley.ripdash.tiles.special.JumpBoostTile;
+import edu.graffwhitley.ripdash.tiles.special.JumpPadTile;
 import edu.graffwhitley.ripdash.tiles.spikes.FlippedHalfSpikeTile;
 import edu.graffwhitley.ripdash.tiles.spikes.FlippedSpikeTile;
 import edu.graffwhitley.ripdash.tiles.spikes.HalfSpikeTile;
+import edu.graffwhitley.ripdash.tiles.spikes.RandomSpikesTile;
 import edu.graffwhitley.ripdash.tiles.spikes.SpikeTile;
 
 public class LevelLoader {
@@ -47,25 +55,36 @@ public class LevelLoader {
                     nextObject = new GroundTile(GroundTile.BRICK, x, y);
                     break;
                 case "Coin":
-                    //nextObject = new CoinPickup();
+                    nextObject = new CoinPickup(x, y);
                     break;
                 case "HalfBlock":
-                    nextObject = new HalfGroundTile(HalfGroundTile.HALF_SQUARE, x, y, true);
+                    nextObject = new HalfGroundTile(HalfGroundTile.HALF_SQUARE, x, y, false);
                     break;
                 case "HalfBlockBottom":
-                    nextObject = new HalfGroundTile(HalfGroundTile.HALF_SQUARE_BOTTOM, x, y, false);
+                    nextObject = new HalfGroundTile(HalfGroundTile.HALF_SQUARE, x, y, true);
                     break;
                 case "HalfSpike":
                     nextObject = new HalfSpikeTile(HalfSpikeTile.HALFSPIKE, x, y); 
                     break;
                 case "JumpBoost":
-                    //nextObject = new JumpBoostTile();
+                    nextObject = new JumpBoostTile(JumpBoostTile.JUMP_BOOST, x, y);
                     break;
                 case "JumpPad":
-                    //nextObject = new JumpPadTile();
+                    nextObject = new JumpPadTile(JumpPadTile.JUMP_PAD, x, y);
                     break;
                 case "RandomSpikes":
-                    //nextObject = new RandomSpikesTile();
+                    int randSprite = RandomSpikesTile.RANDOM_SPIKES_0;
+                    switch ((int)(Math.random() * 4)) {
+                        case 1:
+                            randSprite = RandomSpikesTile.RANDOM_SPIKES_1;
+                            break;
+                        case 2:
+                            randSprite = RandomSpikesTile.RANDOM_SPIKES_2;
+                            break;
+                        case 3:
+                            randSprite = RandomSpikesTile.RANDOM_SPIKES_3;
+                    }
+                    nextObject = new RandomSpikesTile(randSprite, x, y);
                     break;
                 case "Spike":
                     nextObject = new SpikeTile(SpikeTile.SPIKE, x, y);
@@ -74,13 +93,13 @@ public class LevelLoader {
                     nextObject = new GroundTile(GroundTile.SQUARE, x, y);
                     break;
                 case "Tunnel":
-                    //nextObject = new CharacterTransformer();
+                    nextObject = new CharacterTransformer(ShipCharacter.class, x, y);
                     break;
                 case "Chain":
-                    //nextObject = new ChainBgTile();
+                    nextObject = new ChainBgObj(x, y);
                     break;
                 case "LampPost":
-                    //nextObject = new LampPostBgTile();
+                    nextObject = new LampPostBgObj(x, y);
                     break;
                 case "CharacterSpawner":
                     nextObject = new SliderCharacter(x, y);

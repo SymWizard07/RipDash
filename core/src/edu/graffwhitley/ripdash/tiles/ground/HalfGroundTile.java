@@ -12,10 +12,12 @@ public class HalfGroundTile extends StaticTile {
     public HalfGroundTile(int poolIndex, float x, float y, boolean flipped) {
         super(poolIndex, x, y);
         bodyShape.setAsBox(1.0f, 0.5f);
-        if (!flipped)
+        if (!flipped) {
             bodyDef.position.y += 0.5f;
-        else
+        }
+        else {
             bodyDef.position.y -= 0.5f;
+        }
         contactType = ContactType.GROUND;
     }
     

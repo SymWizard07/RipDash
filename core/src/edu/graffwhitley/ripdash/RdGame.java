@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import edu.graffwhitley.ripdash.character.CharacterType;
@@ -30,7 +31,7 @@ public class RdGame extends ApplicationAdapter {
 	Box2DDebugRenderer debugRenderer;
 	BitmapFont debugFont;
 
-	String levelPath = "./Levels/tiles (2).json";
+	String levelPath = "./Levels/boosttest.json";
 	Level activeLevel;
 
 	int bgSpriteIndex;
@@ -38,12 +39,21 @@ public class RdGame extends ApplicationAdapter {
 	float bgSpriteWidth = 61.64f;
 	float bgXPos = 0.0f;
 	float bgXPos2 = bgSpriteWidth;
+	Vector2 gravity = new Vector2(0, -160);
 
 	CharacterType character;
 
 	ArrayList<StaticTile> staticTiles = new ArrayList<>();
 
 	public void restartLevel() {
+
+		Array<Body> bodies = new Array<Body>();
+		world.getBodies(bodies);
+
+		for (Body body : bodies) {
+			world.destroyBody(body);
+		}
+
 		camera.position.set(0, -25.0f, 0);
 		activeLevel = LevelLoader.readLevel(levelPath, world);
 		character = activeLevel.getCharacter();
@@ -53,7 +63,7 @@ public class RdGame extends ApplicationAdapter {
 	public void create() {
 		batch = new SpriteBatch();
 
-		world = new World(new Vector2(0, -160), true);
+		world = new World(gravity, true);
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 48, 27);
@@ -66,14 +76,14 @@ public class RdGame extends ApplicationAdapter {
 		activeLevel = LevelLoader.readLevel(levelPath, world);
 
 		character = activeLevel.getCharacter();
-		
+
 		// Debug Cam
 		if (DEBUG_MODE) {
 			debugRenderer = new Box2DDebugRenderer();
 			debugFont = new BitmapFont();
 		}
-		
-		MusicPlayer.playMusic("./Sounds/RipDash.wav");
+
+		// MusicPlayer.playMusic("./Sounds/RipDash.wav");
 
 	}
 
@@ -121,5 +131,9 @@ public class RdGame extends ApplicationAdapter {
 	@Override
 	public void dispose() {
 		batch.dispose();
+	}
+
+	public static LevelObject bodyToLevelObject(Body body) {
+		return (LevelObject)body.getUserData();
 	}
 }

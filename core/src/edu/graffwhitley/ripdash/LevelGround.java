@@ -18,13 +18,15 @@ public class LevelGround extends LevelObject {
 
     private Body body;
     private Sprite sprite;
+    private float yPos;
 
     public LevelGround(World world, float x) {
         super(24.0f, 8.12f);
         PolygonShape bodyShape = new PolygonShape();
 		bodyShape.setAsBox(hSize.x, hSize.y);
 		BodyDef bodyDef = new BodyDef();
-		bodyDef.position.set(new Vector2(x, -40f));
+        yPos = -40.2f;
+		bodyDef.position.set(new Vector2(x, yPos));
 		bodyDef.type = BodyDef.BodyType.StaticBody;
 
         body = world.createBody(bodyDef);
@@ -43,7 +45,7 @@ public class LevelGround extends LevelObject {
         batch.draw(sprite, body.getPosition().x + 23.0f - camera.position.x, body.getPosition().y + 12.5f - camera.position.y, 48f, 9.12f);
         batch.setColor(Color.WHITE);
         if (body.getPosition().x + 24f + 48f < camera.position.x){
-            body.setTransform(body.getPosition().x + 48f * 2, -40f, body.getAngle());
+            body.setTransform(body.getPosition().x + 48f * 2, yPos, body.getAngle());
         }
     }
 

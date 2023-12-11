@@ -3,6 +3,7 @@ package edu.graffwhitley.ripdash.tiles.spikes;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
+import edu.graffwhitley.ContactType;
 import edu.graffwhitley.ripdash.graphics.SpritePool;
 import edu.graffwhitley.ripdash.tiles.StaticTile;
 
@@ -19,6 +20,7 @@ public class SpikeTile extends StaticTile {
         bodyShape = new PolygonShape();
         bodyShape.set(new Vector2[] {vertex1, vertex2, vertex3});
         
+        contactType = ContactType.SPIKE;
     }
 
 }
