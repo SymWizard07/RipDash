@@ -92,7 +92,7 @@ public class LevelLoader {
                     nextObject = new FlippedHalfSpikeTile(FlippedHalfSpikeTile.HALFFLIPPEDSPIKE, x, y); 
                     break; 
                 case "FlippedSpike":
-                    nextObject = new FlippedSpikeTile(FlippedSpikeTile.FLIPPEDSPIKE, x, y);
+                    //nextObject = new FlippedSpikeTile(FlippedSpikeTile.FLIPPEDSPIKE, x, y);
                     break;
                 
             }

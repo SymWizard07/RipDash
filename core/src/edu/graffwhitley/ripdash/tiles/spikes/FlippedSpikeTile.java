@@ -12,10 +12,10 @@ public class FlippedSpikeTile extends StaticTile {
 
     public FlippedSpikeTile(int poolIndex, float x, float y) {
         super(poolIndex, x, y);
-        //this is for the flipped full spike
+        //this is for the flipped half spike
         Vector2 vertex1 = new Vector2(-1, 1);
         Vector2 vertex2 = new Vector2(1, 1);
-        Vector2 vertex3 = new Vector2(0, 1);  
+        Vector2 vertex3 = new Vector2(0, 1); 
 
         bodyShape = new PolygonShape();
         bodyShape.set(new Vector2[] {vertex1, vertex2, vertex3});
