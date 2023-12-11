@@ -47,10 +47,10 @@ public class LevelLoader {
                     //nextObject = new CoinPickup();
                     break;
                 case "HalfBlock":
-                    nextObject = new HalfGroundTile(HalfGroundTile.HALF_SQUARE, x, y, true);
+                    nextObject = new HalfGroundTile(HalfGroundTile.HALF_SQUARE, x, y, false);
                     break;
                 case "HalfBlockBottom":
-                    nextObject = new HalfGroundTile(HalfGroundTile.HALF_SQUARE_BOTTOM, x, y, false);
+                    nextObject = new HalfGroundTile(HalfGroundTile.HALF_SQUARE, x, y, true);
                     break;
                 case "HalfSpike":
                     //nextObject = new HalfSpikeTile();
