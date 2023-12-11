@@ -19,8 +19,9 @@ public class SliderCharacter extends CharacterType {
     @Override
     protected void update() {
 
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && onGround) {
-            body.setLinearVelocity(0, 35.0f);
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && onGround && body.getLinearVelocity().y >= -5.0f && body.getLinearVelocity().y <= 5.0f) {
+            System.out.println("jumped");
+            body.setLinearVelocity(0, 40.0f);
         }
 
         xProgress += 0.3;
@@ -31,6 +32,10 @@ public class SliderCharacter extends CharacterType {
                 alive = false;
                 return;
             }
+        }
+
+        if (isContacting(ContactType.SPIKE)) {
+            alive = false;
         }
 
         if (isContacting(ContactType.GROUND)) {
