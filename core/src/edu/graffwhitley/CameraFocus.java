@@ -12,10 +12,12 @@ public class CameraFocus extends LevelObject {
     
     private Vector2 focusPoint;
     private float startY;
+    private float alpha;
 
     public CameraFocus(float x, float y) {
         super(0f, 0f);
         focusPoint = new Vector2(x, y);
+        alpha = 0;
     }
 
     public Vector2 getFocusPoint() {
@@ -29,11 +31,15 @@ public class CameraFocus extends LevelObject {
 
     @Override
     public void draw(SpriteBatch batch, Camera camera) {
+        if (alpha >= 1.0f) {
+            return;
+        }
         if (camera.position.x < focusPoint.x) {
             startY = camera.position.y;
         }
         else {
-            camera.position.y = Interpolation.linear.apply(startY, focusPoint.y, 0.01f);
+            camera.position.y = Interpolation.fastSlow.apply(startY, focusPoint.y, alpha);
+            alpha += 0.05f;
         }
     }
 }
