@@ -31,7 +31,7 @@ public class RdGame extends ApplicationAdapter {
 	Box2DDebugRenderer debugRenderer;
 	BitmapFont debugFont;
 
-	String levelPath = "./Levels/tiles (25).json";
+	String levelPath = "./Levels/boosttest.json";
 	Level activeLevel;
 
 	int bgSpriteIndex;
@@ -131,5 +131,9 @@ public class RdGame extends ApplicationAdapter {
 	@Override
 	public void dispose() {
 		batch.dispose();
+	}
+
+	public static LevelObject bodyToLevelObject(Body body) {
+		return (LevelObject)body.getUserData();
 	}
 }
