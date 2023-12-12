@@ -13,6 +13,7 @@ public class FlippedSpikeTile extends StaticTile {
 
     public FlippedSpikeTile(int poolIndex, float x, float y) {
         super(poolIndex, x, y);
+        //this is for the flipped half spike
         Vector2 vertex1 = new Vector2(-2 / 2, 2 / 2);
         Vector2 vertex2 = new Vector2(2 / 2, 2 / 2);
         Vector2 vertex3 = new Vector2(0, -2 / 2);
