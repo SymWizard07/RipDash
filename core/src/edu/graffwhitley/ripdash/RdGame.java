@@ -130,7 +130,7 @@ public class RdGame extends ApplicationAdapter {
 			camera.position.add(0.3f, 0f, 0f);
 		}
 		
-		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && !started) {
 			started = true;
 			MusicPlayer.playMusic("./Sounds/RipDashFinal.wav");
 		}
