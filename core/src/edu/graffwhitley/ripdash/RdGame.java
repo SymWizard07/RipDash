@@ -28,7 +28,7 @@ import com.badlogic.gdx.physics.box2d.*;
 
 public class RdGame extends ApplicationAdapter {
 
-	public static final boolean DEBUG_MODE = true;
+	public static final boolean DEBUG_MODE = false;
 
 	SpriteBatch batch;
 	Texture img;
@@ -149,8 +149,12 @@ public class RdGame extends ApplicationAdapter {
 			bgXPos2 = bgSpriteWidth;
 		}
 
-		if (started) {
+		if (started || !win) {
 			world.step(1 / 60f, 6, 2);
+		}
+
+		if (camera.position.x >= activeLevel.winX) {
+			win = true;
 		}
 
 		while (!bodiesToDestroy.isEmpty()) {
