@@ -58,6 +58,9 @@ public class RdGame extends ApplicationAdapter {
 
 		camera.position.set(0, -25.0f, 0);
 		activeLevel = LevelLoader.readLevel(levelPath, world);
+
+		MusicPlayer.stopMusic();
+		MusicPlayer.playMusic("./Sounds/RipDashFinal.wav");
 	}
 
 	@Override
