@@ -13,4 +13,8 @@ public class MusicPlayer {
         // Start playing the music
         activeMusic.play();
     }
+
+    public static void stopMusic() {
+        activeMusic.stop();
+    }
 }
