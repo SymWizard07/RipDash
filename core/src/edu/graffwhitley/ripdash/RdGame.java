@@ -146,7 +146,7 @@ public class RdGame extends ApplicationAdapter {
 			bgXPos2 = bgSpriteWidth;
 		}
 
-		if (started && !win) {
+		if (started) {
 			world.step(1 / 60f, 6, 2);
 		}
 
