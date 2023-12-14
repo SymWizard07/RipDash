@@ -14,7 +14,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-import edu.graffwhitley.ripdash.character.CharacterType;
 import edu.graffwhitley.ripdash.graphics.SpritePool;
 import edu.graffwhitley.ripdash.music.MusicPlayer;
 import edu.graffwhitley.ripdash.tiles.StaticTile;

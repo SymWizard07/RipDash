@@ -16,7 +16,6 @@ import edu.graffwhitley.ripdash.character.ShipCharacter;
 import edu.graffwhitley.ripdash.character.SliderCharacter;
 import edu.graffwhitley.ripdash.graphics.AdjustedSprite;
 import edu.graffwhitley.ripdash.graphics.SpritePool;
-import edu.graffwhitley.ripdash.music.MusicPlayer;
 
 public class CharacterTransformer extends LevelObject {
 

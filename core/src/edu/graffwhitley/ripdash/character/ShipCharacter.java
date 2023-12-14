@@ -1,7 +1,5 @@
 package edu.graffwhitley.ripdash.character;
 
-import org.lwjgl.Sys;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
