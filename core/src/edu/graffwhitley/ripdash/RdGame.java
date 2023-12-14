@@ -70,7 +70,6 @@ public class RdGame extends ApplicationAdapter {
 		activeLevel = LevelLoader.readLevel(levelPath, world);
 
 		MusicPlayer.stopMusic();
-		MusicPlayer.playMusic("./Sounds/RipDashFinal.wav");
 	}
 
 	@Override
@@ -136,6 +135,7 @@ public class RdGame extends ApplicationAdapter {
 		
 		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
 			started = true;
+			MusicPlayer.playMusic("./Sounds/RipDashFinal.wav");
 		}
 
 		float parallaxSpeed = 0.05f;
