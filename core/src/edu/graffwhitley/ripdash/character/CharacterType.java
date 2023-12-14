@@ -18,24 +18,27 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import edu.graffwhitley.ContactType;
 import edu.graffwhitley.ripdash.LevelObject;
+import edu.graffwhitley.ripdash.RdGame;
 import edu.graffwhitley.ripdash.graphics.SpritePool;
+import edu.graffwhitley.ripdash.objects.CharacterTransformer;
 
 public abstract class CharacterType extends LevelObject {
 
     protected PolygonShape bodyShape;
     protected BodyDef bodyDef;
-    protected Body body;
+    public Body body;
     protected Sprite sprite;
-    protected float xProgress;
+    public float xProgress;
     protected ArrayList<Body> activeContacts;
     public boolean alive;
+    private CharacterType characterTypeRef = this;
 
     public CharacterType(int poolIndex, float x, float y) {
         super(0.9f, 0.9f);
         bodyShape = new PolygonShape();
         bodyShape.setAsBox(hSize.x, hSize.y);
         bodyDef = new BodyDef();
-        bodyDef.position.set(new Vector2(x, y));
+        bodyDef.position.set(x, y);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
 
         contactType = ContactType.PLAYER;
@@ -67,6 +70,11 @@ public abstract class CharacterType extends LevelObject {
 
                 if (((LevelObject)checkFixture.getBody().getUserData()).contactType == null) {
                     return;
+                }
+
+                LevelObject checkObject = RdGame.bodyToLevelObject(checkFixture.getBody());
+                if (checkObject.contactType == ContactType.TRANSFORM) {
+                    ((CharacterTransformer)checkObject).changeCharacter(characterTypeRef);
                 }
 
                 activeContacts.add(checkFixture.getBody());
@@ -102,6 +110,14 @@ public abstract class CharacterType extends LevelObject {
             }
         });
 
+    }
+
+    public void removeBody() {
+        RdGame.bodiesToDestroy.add(body);
+    }
+
+    public Vector2 getPosition() {
+        return body.getPosition();
     }
 
     protected boolean isContacting(ContactType contactType) {
