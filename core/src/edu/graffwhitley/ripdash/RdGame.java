@@ -99,9 +99,6 @@ public class RdGame extends ApplicationAdapter {
 			debugRenderer = new Box2DDebugRenderer();
 			debugFont = new BitmapFont();
 		}
-
-		MusicPlayer.playMusic("./Sounds/RipDashFinal.wav");
-
 	}
 
 	@Override
