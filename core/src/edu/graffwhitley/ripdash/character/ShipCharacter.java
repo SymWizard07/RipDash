@@ -40,6 +40,10 @@ public class ShipCharacter extends CharacterType {
         xProgress += 0.3;
         body.setTransform(xProgress, body.getPosition().y, body.getAngle());
 
+        if (isContacting(ContactType.SPIKE)) {
+            alive = false;
+        }
+        
         if (isContacting(ContactType.GROUND)) {
 
             float currentAngleDegrees = (body.getAngle() * MathUtils.radiansToDegrees) % 360;

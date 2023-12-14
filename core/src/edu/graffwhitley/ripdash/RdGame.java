@@ -36,7 +36,7 @@ public class RdGame extends ApplicationAdapter {
 	Box2DDebugRenderer debugRenderer;
 	BitmapFont debugFont; 
 
-	String levelPath = "./Levels/OfficialLevel.json";
+	String levelPath = "./Levels/Final.json";
 	public static World world;
 	public static Level activeLevel;
 	public static Queue<Body> bodiesToDestroy = new LinkedList<>();
