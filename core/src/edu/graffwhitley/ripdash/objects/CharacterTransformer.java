@@ -10,22 +10,27 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import edu.graffwhitley.ContactType;
 import edu.graffwhitley.ripdash.LevelObject;
+import edu.graffwhitley.ripdash.RdGame;
 import edu.graffwhitley.ripdash.character.CharacterType;
+import edu.graffwhitley.ripdash.character.ShipCharacter;
+import edu.graffwhitley.ripdash.character.SliderCharacter;
 import edu.graffwhitley.ripdash.graphics.AdjustedSprite;
 import edu.graffwhitley.ripdash.graphics.SpritePool;
 import edu.graffwhitley.ripdash.music.MusicPlayer;
 
 public class CharacterTransformer extends LevelObject {
 
-    public static final int SHIP_TRANSFORMER = SpritePool.addSprite("./Collision/Tunnel.png", 23.0f, 12.5f);
+    public static final int SHIP_TRANSFORMER = SpritePool.addSprite("./Collision/Tunnel.png", 22.0f, 10.0f);
 
     protected PolygonShape bodyShape;
 	protected BodyDef bodyDef;
 	protected Body body;
 	protected AdjustedSprite sprite;
 
-    public <T extends CharacterType> CharacterTransformer(Class<T> characterType, float x, float y) {
-        super(1.0f, 1.8f);
+    private String characterTypeName;
+
+    public <T extends CharacterType> CharacterTransformer(String characterTypeName, float x, float y) {
+        super(2.0f, 3.6f);
 
         bodyShape = new PolygonShape();
 		bodyShape.setAsBox(hSize.x, hSize.y);
@@ -33,7 +38,8 @@ public class CharacterTransformer extends LevelObject {
 		bodyDef.position.set(new Vector2(x, y));
 		bodyDef.type = BodyDef.BodyType.StaticBody;
 
-        switch (characterType.getName()) {
+        this.characterTypeName = characterTypeName;
+        switch (characterTypeName) {
             case "SliderCharacter":
                 sprite = SpritePool.getSprite(CharacterTransformer.SHIP_TRANSFORMER);
                 break;
@@ -46,6 +52,23 @@ public class CharacterTransformer extends LevelObject {
 
         contactType = ContactType.TRANSFORM;
 
+    }
+
+    public void changeCharacter(CharacterType oldCharacter) {
+        CharacterType newCharacter = null;
+
+        switch (characterTypeName) {
+            case "SliderCharacter":
+                newCharacter = new SliderCharacter(oldCharacter.getPosition().x, oldCharacter.getPosition().y);
+                break;
+            case "ShipCharacter":
+                newCharacter = new ShipCharacter(oldCharacter.getPosition().x, oldCharacter.getPosition().y);
+                break;
+        }
+
+        newCharacter.xProgress = oldCharacter.xProgress;
+        
+        RdGame.activeLevel.setCharacter(newCharacter);
     }
 
     @Override

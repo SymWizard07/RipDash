@@ -92,8 +92,11 @@ public class LevelLoader {
                 case "Square":
                     nextObject = new GroundTile(GroundTile.SQUARE, x, y);
                     break;
-                case "Tunnel":
-                    nextObject = new CharacterTransformer(ShipCharacter.class, x, y);
+                case "SliderTransformer":
+                    nextObject = new CharacterTransformer("SliderCharacter", x, y);
+                    break;
+                case "ShipTransformer":
+                    nextObject = new CharacterTransformer("ShipCharacter", x, y);
                     break;
                 case "Chain":
                     nextObject = new ChainBgObj(x, y);
@@ -124,7 +127,7 @@ public class LevelLoader {
         level.addObject(new LevelGround(world, -24));
         level.addObject(new LevelGround(world, 24));
 
-        CharacterType player = new SliderCharacter(-300, -28);
+        CharacterType player = new SliderCharacter(0, -28);
 		player.createBody(world);
 		level.addObject(player);
 

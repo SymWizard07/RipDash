@@ -3,6 +3,7 @@ package edu.graffwhitley.ripdash.character;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import edu.graffwhitley.ContactType;
 import edu.graffwhitley.ripdash.LevelObject;
@@ -17,6 +18,8 @@ public class SliderCharacter extends CharacterType {
 
     public SliderCharacter(float x, float y) {
         super(SLIDER, x, y);
+
+        RdGame.world.setGravity(new Vector2(0, -160));
     }
 
     @Override

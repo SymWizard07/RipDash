@@ -33,6 +33,16 @@ public class Level {
         return null;
     }
 
+    public void setCharacter(CharacterType character) {
+        for (LevelObject levelObject : objects) {
+            if (levelObject instanceof CharacterType) {
+                objects.set(objects.indexOf(levelObject), character);
+                RdGame.bodiesToDestroy.add(((CharacterType)levelObject).body);
+                RdGame.bodiesToCreate.add(character);
+            }
+        }
+    }
+
     public void drawObjects(SpriteBatch batch, Camera camera) {
         for (LevelObject levelObject : objects) {
 			levelObject.draw(batch, camera);

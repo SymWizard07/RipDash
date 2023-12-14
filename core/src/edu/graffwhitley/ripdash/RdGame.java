@@ -1,6 +1,8 @@
 package edu.graffwhitley.ripdash;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.graphics.Color;
@@ -22,17 +24,19 @@ import com.badlogic.gdx.physics.box2d.*;
 
 public class RdGame extends ApplicationAdapter {
 
-	public static final boolean DEBUG_MODE = false;
+	public static final boolean DEBUG_MODE = true;
 
 	SpriteBatch batch;
 	Texture img;
-	World world;
 	OrthographicCamera camera;
 	Box2DDebugRenderer debugRenderer;
 	BitmapFont debugFont; 
 
-	String levelPath = "./Levels/tiles (58).json";
-	Level activeLevel;
+	String levelPath = "./Levels/transformtest.json";
+	public static World world;
+	public static Level activeLevel;
+	public static Queue<Body> bodiesToDestroy = new LinkedList<>();
+	public static Queue<LevelObject> bodiesToCreate = new LinkedList<>();
 
 	int bgSpriteIndex;
 	Sprite bgSprite;
@@ -40,8 +44,6 @@ public class RdGame extends ApplicationAdapter {
 	float bgXPos = 0.0f;
 	float bgXPos2 = bgSpriteWidth;
 	Vector2 gravity = new Vector2(0, -160);
-
-	CharacterType character;
 
 	ArrayList<StaticTile> staticTiles = new ArrayList<>();
 
@@ -56,7 +58,6 @@ public class RdGame extends ApplicationAdapter {
 
 		camera.position.set(0, -25.0f, 0);
 		activeLevel = LevelLoader.readLevel(levelPath, world);
-		character = activeLevel.getCharacter();
 	}
 
 	@Override
@@ -74,8 +75,6 @@ public class RdGame extends ApplicationAdapter {
 		bgSpriteIndex = SpritePool.addSprite("./Details/Background.png");
 
 		activeLevel = LevelLoader.readLevel(levelPath, world);
-
-		character = activeLevel.getCharacter();
 
 		// Debug Cam
 		if (DEBUG_MODE) {
@@ -105,7 +104,7 @@ public class RdGame extends ApplicationAdapter {
 
 		batch.end();
 
-		if (!character.alive) {
+		if (activeLevel.getCharacter() != null && !activeLevel.getCharacter().alive) {
 			restartLevel();
 		}
 
@@ -127,6 +126,16 @@ public class RdGame extends ApplicationAdapter {
 		}
 
 		world.step(1 / 60f, 6, 2);
+
+		while (!bodiesToDestroy.isEmpty()) {
+			Body body = bodiesToDestroy.poll();
+			world.destroyBody(body);
+		}
+
+		while (!bodiesToCreate.isEmpty()) {
+			LevelObject levelObject = bodiesToCreate.poll();
+			levelObject.createBody(world);
+		}
 	}
 
 	@Override
