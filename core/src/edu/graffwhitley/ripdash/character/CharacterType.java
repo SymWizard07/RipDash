@@ -137,7 +137,9 @@ public abstract class CharacterType extends LevelObject {
         if (!alive) {
             return;
         }
-        update();
+        if (RdGame.started) {
+            update();
+        }
 
         sprite.setSize(hSize.x * 2, hSize.y * 2);
         sprite.setOriginCenter();

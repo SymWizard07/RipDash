@@ -10,6 +10,7 @@ import edu.graffwhitley.ripdash.character.CharacterType;
 public class Level {
     
     private ArrayList<LevelObject> objects;
+    public float winX;
 
     public Level() {
         objects = new ArrayList<>();

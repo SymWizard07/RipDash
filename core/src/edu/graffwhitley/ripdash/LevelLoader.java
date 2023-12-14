@@ -115,6 +115,9 @@ public class LevelLoader {
                 case "FlippedSpike":
                     nextObject = new FlippedSpikeTile(FlippedSpikeTile.FLIPPEDSPIKE, x, y);
                     break;
+                case "FinishLine":
+                    level.winX = x;
+                    break;
                 
             }
             if (nextObject != null) {

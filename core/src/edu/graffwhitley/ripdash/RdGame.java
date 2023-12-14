@@ -5,12 +5,17 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 
@@ -23,7 +28,7 @@ import com.badlogic.gdx.physics.box2d.*;
 
 public class RdGame extends ApplicationAdapter {
 
-	public static final boolean DEBUG_MODE = false;
+	public static final boolean DEBUG_MODE = true;
 
 	SpriteBatch batch;
 	Texture img;
@@ -36,6 +41,8 @@ public class RdGame extends ApplicationAdapter {
 	public static Level activeLevel;
 	public static Queue<Body> bodiesToDestroy = new LinkedList<>();
 	public static Queue<LevelObject> bodiesToCreate = new LinkedList<>();
+	public static boolean win = false;
+	public static boolean started = false;
 
 	int bgSpriteIndex;
 	Sprite bgSprite;
@@ -43,6 +50,8 @@ public class RdGame extends ApplicationAdapter {
 	float bgXPos = 0.0f;
 	float bgXPos2 = bgSpriteWidth;
 	Vector2 gravity = new Vector2(0, -160);
+
+	BitmapFont font;
 
 	ArrayList<StaticTile> staticTiles = new ArrayList<>();
 
@@ -54,6 +63,8 @@ public class RdGame extends ApplicationAdapter {
 		for (Body body : bodies) {
 			world.destroyBody(body);
 		}
+
+		started = false;
 
 		camera.position.set(0, -25.0f, 0);
 		activeLevel = LevelLoader.readLevel(levelPath, world);
@@ -77,6 +88,12 @@ public class RdGame extends ApplicationAdapter {
 		bgSpriteIndex = SpritePool.addSprite("./Details/Background.png");
 
 		activeLevel = LevelLoader.readLevel(levelPath, world);
+
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("./Fonts/OXYGENE1.TTF"));
+		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+		parameter.size = 120;
+		font = generator.generateFont(parameter);
+		generator.dispose();
 
 		// Debug Cam
 		if (DEBUG_MODE) {
@@ -113,7 +130,13 @@ public class RdGame extends ApplicationAdapter {
 			debugRenderer.render(world, camera.combined);
 		}
 
-		camera.position.add(0.3f, 0f, 0f);
+		if (started) {
+			camera.position.add(0.3f, 0f, 0f);
+		}
+		
+		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+			started = true;
+		}
 
 		float parallaxSpeed = 0.05f;
 		bgXPos -= parallaxSpeed;
@@ -126,7 +149,9 @@ public class RdGame extends ApplicationAdapter {
 			bgXPos2 = bgSpriteWidth;
 		}
 
-		world.step(1 / 60f, 6, 2);
+		if (started) {
+			world.step(1 / 60f, 6, 2);
+		}
 
 		while (!bodiesToDestroy.isEmpty()) {
 			Body body = bodiesToDestroy.poll();
