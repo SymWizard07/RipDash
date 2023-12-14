@@ -31,7 +31,7 @@ public class RdGame extends ApplicationAdapter {
 	Box2DDebugRenderer debugRenderer;
 	BitmapFont debugFont; 
 
-	String levelPath = "./Levels/tiles (34).json";
+	String levelPath = "./Levels/tiles (58).json";
 	Level activeLevel;
 
 	int bgSpriteIndex;
@@ -84,6 +84,7 @@ public class RdGame extends ApplicationAdapter {
 		}
 
 		MusicPlayer.playMusic("./Sounds/RipDashFinal.wav");
+		//MusicPlayer.playMusic("./Sounds/SecondHalf.wav");
 
 	}
 

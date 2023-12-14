@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import edu.graffwhitley.ContactType;
 import edu.graffwhitley.ripdash.graphics.SpritePool;
+import edu.graffwhitley.ripdash.music.MusicPlayer;
 import edu.graffwhitley.ripdash.tiles.StaticTile;
 
 public class CoinPickup extends StaticTile {
@@ -25,6 +26,7 @@ public class CoinPickup extends StaticTile {
         super(CoinPickup.COIN_PICKUP[0], x, y);
 
         contactType = ContactType.COIN;
+
     }
 
     public void createBody(World world) {
