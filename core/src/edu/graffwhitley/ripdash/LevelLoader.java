@@ -11,7 +11,6 @@ import com.google.gson.reflect.TypeToken;
 
 import edu.graffwhitley.CameraFocus;
 import edu.graffwhitley.ripdash.character.CharacterType;
-import edu.graffwhitley.ripdash.character.ShipCharacter;
 import edu.graffwhitley.ripdash.character.SliderCharacter;
 import edu.graffwhitley.ripdash.objects.CharacterTransformer;
 import edu.graffwhitley.ripdash.objects.background.ChainBgObj;
