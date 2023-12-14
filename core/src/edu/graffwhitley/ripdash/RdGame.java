@@ -24,7 +24,7 @@ import com.badlogic.gdx.physics.box2d.*;
 
 public class RdGame extends ApplicationAdapter {
 
-	public static final boolean DEBUG_MODE = true;
+	public static final boolean DEBUG_MODE = false;
 
 	SpriteBatch batch;
 	Texture img;
@@ -32,7 +32,7 @@ public class RdGame extends ApplicationAdapter {
 	Box2DDebugRenderer debugRenderer;
 	BitmapFont debugFont; 
 
-	String levelPath = "./Levels/tiles (70).json";
+	String levelPath = "./Levels/OfficialLevel.json";
 	public static World world;
 	public static Level activeLevel;
 	public static Queue<Body> bodiesToDestroy = new LinkedList<>();
@@ -86,7 +86,6 @@ public class RdGame extends ApplicationAdapter {
 		}
 
 		MusicPlayer.playMusic("./Sounds/RipDashFinal.wav");
-		//MusicPlayer.playMusic("./Sounds/SecondHalf.wav");
 
 	}
 
