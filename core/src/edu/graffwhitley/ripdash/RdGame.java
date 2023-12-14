@@ -126,7 +126,7 @@ public class RdGame extends ApplicationAdapter {
 			debugRenderer.render(world, camera.combined);
 		}
 
-		if (started) {
+		if (started && !win) {
 			camera.position.add(0.3f, 0f, 0f);
 		}
 		
@@ -146,7 +146,7 @@ public class RdGame extends ApplicationAdapter {
 			bgXPos2 = bgSpriteWidth;
 		}
 
-		if (started || !win) {
+		if (started && !win) {
 			world.step(1 / 60f, 6, 2);
 		}
 
